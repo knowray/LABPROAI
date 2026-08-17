@@ -1,0 +1,173 @@
+name: Patch LabProAI to V2.11
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/patch-v211.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update tweezer selector logic
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          html = p.read_text(encoding='utf-8')
+
+          pattern = r"} else if\(guidedPath==='tweezers'\)\{.*?\n  } else if\(guidedPath==='tools'\)\{"
+
+          new_block = """} else if(guidedPath==='tweezers'){
+              title = 'Tweezer qualification result';
+              const esd=val('esd'), tip=val('tip'), env=val('environment'), mag=val('magnetic');
+
+              // Candidate products now change with the requested geometry.
+              // ESD, cleanroom and magnetic requirements then modify the ruling.
+
+              if(tip==='flat'){
+                html += row(
+                  'Stainless Flat-Tip Tweezer','TWZ-SS-FLAT',
+                  esd==='yes' ? 'FAIL' : env==='iso5' ? 'VERIFY' : 'PASS',
+                  esd==='yes'
+                    ? 'Correct flat-tip geometry, but this general stainless option is not ESD-qualified.'
+                    : env==='iso5'
+                      ? 'Correct flat-tip geometry; verify documented suitability for the stated ISO 5 environment.'
+                      : 'Simple flat-tip stainless option matched directly to the requested geometry.'
+                );
+
+                html += row(
+                  'ESD Flat-Tip Tweezer','TWZ-ESD-FLAT',
+                  mag==='yes' ? 'VERIFY' : 'PASS',
+                  mag==='yes'
+                    ? 'Flat geometry and ESD fit are strong; verify non-magnetic performance for the exact construction.'
+                    : 'Flat-tip geometry with ESD-safe construction for sensitive handling.'
+                );
+
+                if(mag==='yes'){
+                  html += row(
+                    'Ceramic Non-Magnetic Flat-Tip','TWZ-CER-FLAT-NM',
+                    esd==='yes' ? 'VERIFY' : 'PASS',
+                    esd==='yes'
+                      ? 'Matches the flat-tip and non-magnetic requirements; verify ESD behavior for the exact ceramic material.'
+                      : 'Flat-tip, non-magnetic option matched to the stated handling requirement.'
+                  );
+                } else {
+                  html += row(
+                    'Fine-Point Precision Tweezer','TT-ESD-7-SA',
+                    'FAIL',
+                    'Fine-point geometry does not match the requested flat-tip handling requirement.'
+                  );
+                }
+
+              } else if(tip==='curved'){
+                html += row(
+                  'Curved Precision Tweezer','TWZ-SS-CURVE',
+                  esd==='yes' ? 'VERIFY' : env==='iso5' ? 'VERIFY' : 'PASS',
+                  esd==='yes'
+                    ? 'Correct curved geometry; verify ESD qualification for the exact model.'
+                    : env==='iso5'
+                      ? 'Correct curved geometry; confirm documented cleanroom suitability.'
+                      : 'Curved-tip geometry matched to the requested handling task.'
+                );
+
+                html += row(
+                  'ESD Curved-Tip Tweezer','TWZ-ESD-CURVE',
+                  mag==='yes' ? 'VERIFY' : 'PASS',
+                  mag==='yes'
+                    ? 'Curved geometry and ESD fit are strong; confirm non-magnetic performance.'
+                    : 'Strong candidate where curved access and ESD control are both required.'
+                );
+
+                html += row(
+                  mag==='yes' ? 'Ceramic Non-Magnetic Curved Tweezer' : 'General Stainless Fine-Tip',
+                  mag==='yes' ? 'TWZ-CER-CURVE-NM' : 'TWZ-SS-FINE',
+                  mag==='yes' ? (esd==='yes' ? 'VERIFY' : 'PASS') : 'FAIL',
+                  mag==='yes'
+                    ? (esd==='yes'
+                        ? 'Matches curved and non-magnetic requirements; verify ESD behavior.'
+                        : 'Curved, non-magnetic option matched to the stated requirement.')
+                    : 'Fine-tip geometry does not match the requested curved-tip requirement.'
+                );
+
+              } else if(tip==='fine'){
+                html += row(
+                  'ESD Fine-Tip Tweezer','TT-ESD-7-SA',
+                  mag==='yes' ? 'VERIFY' : 'PASS',
+                  mag==='yes'
+                    ? 'Fine-tip and ESD fit are strong; confirm non-magnetic performance for the exact alloy.'
+                    : 'Strong fine-tip precision-handling candidate.'
+                );
+
+                html += row(
+                  'General Stainless Fine-Tip','TWZ-SS-FINE',
+                  esd==='yes' ? 'FAIL' : env==='iso5' ? 'VERIFY' : 'PASS',
+                  esd==='yes'
+                    ? 'Fine-tip geometry fits, but this option is not ESD-qualified.'
+                    : env==='iso5'
+                      ? 'Fine-tip geometry fits; ISO 5 suitability needs documentation.'
+                      : 'Simple general-purpose fine-tip option.'
+                );
+
+                html += row(
+                  'Ceramic Non-Magnetic Fine-Tip','TWZ-CER-NM',
+                  esd==='yes' ? 'VERIFY' : 'PASS',
+                  esd==='yes'
+                    ? 'Non-magnetic fine-tip candidate; verify static-dissipative qualification for ESD-sensitive use.'
+                    : 'Strong non-magnetic fine-tip candidate.'
+                );
+
+              } else {
+                // When geometry is unknown, show representative choices rather than pretending the geometry is resolved.
+                html += row(
+                  'General Stainless Flat-Tip','TWZ-SS-FLAT',
+                  esd==='yes' ? 'FAIL' : 'VERIFY',
+                  esd==='yes'
+                    ? 'Not ESD-qualified; tip geometry also needs to be confirmed.'
+                    : 'Possible general-purpose option, but the required tip geometry still needs clarification.'
+                );
+
+                html += row(
+                  'ESD Fine-Tip Tweezer','TT-ESD-7-SA',
+                  'VERIFY',
+                  'ESD-capable precision option; confirm whether fine-tip geometry matches the actual task.'
+                );
+
+                html += row(
+                  mag==='yes' ? 'Ceramic Non-Magnetic Tweezer' : 'Curved Precision Tweezer',
+                  mag==='yes' ? 'TWZ-CER-NM-GEN' : 'TWZ-SS-CURVE',
+                  mag==='yes' && esd!=='yes' ? 'PASS' : 'VERIFY',
+                  mag==='yes'
+                    ? (esd==='yes'
+                        ? 'Meets the non-magnetic requirement; verify ESD behavior and final tip geometry.'
+                        : 'Meets the non-magnetic requirement; final tip geometry should still be confirmed.')
+                    : 'Useful for angled access, but geometry should be confirmed before selection.'
+                );
+              }
+
+            } else if(guidedPath==='tools'){"""
+
+          updated, count = re.subn(pattern, new_block, html, count=1, flags=re.S)
+          if count != 1:
+              raise SystemExit(f'Expected one tweezer block replacement, got {count}')
+
+          p.write_text(updated, encoding='utf-8')
+          PY
+
+      - name: Commit V2.11
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Update LabProAI demo to V2.11"
+          git push
