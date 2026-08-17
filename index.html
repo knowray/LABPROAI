@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LabProAI — Technical Decision & Procurement Intelligence</title>
+<meta name="description" content="LabProAI demo — AI-assisted technical decision, specialist review, procurement and supply continuity for laboratory environments." />
+<style>
+  :root{
+    --navy:#071a33;
+    --navy2:#0d274d;
+    --blue:#1967ff;
+    --violet:#6c4cff;
+    --cyan:#25b7ff;
+    --ink:#10213a;
+    --muted:#65748a;
+    --bg:#f5f8fc;
+    --card:#ffffff;
+    --line:#dfe7f2;
+    --success:#14a86a;
+    --warn:#e59c17;
+    --danger:#df4b52;
+    --shadow:0 18px 45px rgba(21,40,80,.10);
+    --radius:20px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color:var(--ink);
+    background:linear-gradient(180deg,#f9fbff 0%,#f4f7fb 100%);
+  }
+  a{text-decoration:none;color:inherit}
+  button{font:inherit}
+  .container{width:min(1180px,92vw);margin:0 auto}
+  .nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(255,255,255,.90);
+    backdrop-filter:blur(15px);
+    border-bottom:1px solid rgba(223,231,242,.9);
+  }
+  .nav-inner{
+    height:76px;display:flex;align-items:center;justify-content:space-between;gap:22px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-size:26px;font-weight:800;color:var(--navy)}
+  .brand-mark{
+    width:32px;height:32px;border-radius:10px;
+    background:linear-gradient(135deg,var(--blue),var(--violet));
+    display:grid;place-items:center;color:#fff;font-size:18px;box-shadow:0 8px 20px rgba(82,80,255,.28);
+  }
+  .brand small{font-size:12px;font-weight:600;color:#8895a7;margin-left:4px}
+  .nav-links{display:flex;gap:28px;color:#53637a;font-size:14px;font-weight:650}
+  .nav-actions{display:flex;gap:10px}
+  .btn{
+    border:0;border-radius:12px;padding:12px 18px;cursor:pointer;
+    font-weight:750;transition:.2s ease;display:inline-flex;align-items:center;gap:8px;justify-content:center;
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{color:#fff;background:linear-gradient(135deg,var(--blue),var(--violet));box-shadow:0 10px 28px rgba(60,85,240,.25)}
+  .btn-soft{background:#eef3fb;color:#29415f}
+  .btn-outline{background:#fff;border:1px solid var(--line);color:#213a5a}
+  .hero{
+    position:relative;overflow:hidden;padding:86px 0 66px;
+  }
+  .hero:before{
+    content:"";position:absolute;inset:-120px auto auto 55%;
+    width:650px;height:650px;border-radius:50%;
+    background:radial-gradient(circle,rgba(108,76,255,.18),rgba(37,183,255,.04) 55%,transparent 70%);
+    pointer-events:none;
+  }
+  .hero-grid{display:grid;grid-template-columns:1.04fr .96fr;gap:54px;align-items:center}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;
+    background:#eaf0ff;color:#3d5ed0;font-size:13px;font-weight:800;border:1px solid #d9e4ff;
+  }
+  h1{font-size:clamp(44px,6vw,76px);line-height:.98;letter-spacing:-.055em;margin:22px 0;color:var(--navy)}
+  .gradient{background:linear-gradient(90deg,#1a67ff,#714cff 58%,#15a6ef);-webkit-background-clip:text;color:transparent}
+  .hero p{font-size:19px;line-height:1.65;color:#5d6d83;max-width:680px}
+  .hero-actions{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+  .micro{margin-top:18px;font-size:13px;color:#7d8a9b;display:flex;gap:18px;flex-wrap:wrap}
+  .micro span:before{content:"✓";color:var(--success);font-weight:900;margin-right:7px}
+  .hero-card{
+    background:#fff;border:1px solid #e5ecf6;border-radius:24px;box-shadow:var(--shadow);overflow:hidden;
+  }
+  .hero-card-head{
+    padding:18px 20px;background:linear-gradient(135deg,#071a33,#12315c);color:#fff;
+    display:flex;align-items:center;justify-content:space-between
+  }
+  .window-dots{display:flex;gap:6px}.window-dots i{width:7px;height:7px;border-radius:50%;background:#6f86a5}
+  .hero-card-body{padding:20px}
+  .project-label{font-size:12px;color:#8491a3;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+  .project-title{font-size:18px;font-weight:850;margin:5px 0 14px}
+  .trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+  .trust-item{padding:12px;border:1px solid var(--line);border-radius:12px;background:#fbfdff}
+  .trust-item b{display:block;font-size:12px}.trust-item small{font-size:11px;color:var(--success)}
+  .decision-row{
+    display:grid;grid-template-columns:1.2fr .58fr 1.3fr;gap:8px;align-items:center;
+    padding:11px 0;border-top:1px solid #edf1f6;font-size:12px
+  }
+  .pill{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:850;width:max-content}
+  .pass{background:#e8f8f0;color:#08764a}.verify{background:#fff4df;color:#9a6200}.fail{background:#fdebec;color:#a5222a}
+  .confidence{
+    margin-top:14px;padding:13px 14px;border-radius:14px;background:linear-gradient(135deg,#eef4ff,#f6efff);
+    display:flex;align-items:center;justify-content:space-between;font-weight:800
+  }
+  section{padding:78px 0}
+  .section-kicker{font-size:13px;text-transform:uppercase;letter-spacing:.11em;color:#5675db;font-weight:850}
+  .section-title{font-size:clamp(34px,4vw,52px);line-height:1.06;letter-spacing:-.035em;margin:12px 0 16px;color:var(--navy)}
+  .section-lead{font-size:18px;line-height:1.65;color:#66758a;max-width:800px}
+  .architecture{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:34px
+  }
+  .arch-step{
+    background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 14px;box-shadow:0 10px 24px rgba(20,43,80,.05)
+  }
+  .arch-step .num{
+    width:32px;height:32px;border-radius:9px;background:#edf3ff;color:#3659ca;display:grid;place-items:center;font-weight:900;margin-bottom:12px
+  }
+  .arch-step b{display:block;font-size:14px}.arch-step small{display:block;color:#7e8b9f;line-height:1.45;margin-top:5px}
+  .engage{
+    margin-top:14px;border:1px dashed #b9c7dc;border-radius:14px;padding:14px;text-align:center;
+    color:#425979;background:#f9fbff;font-weight:800
+  }
+  .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+  .feature{
+    background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 12px 28px rgba(19,42,77,.05)
+  }
+  .feature-icon{
+    width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#eaf0ff,#efe8ff);
+    display:grid;place-items:center;font-size:20px;margin-bottom:14px
+  }
+  .feature h3{margin:0 0 8px;font-size:18px}.feature p{margin:0;color:#68778a;line-height:1.6;font-size:14px}
+  .demo-shell{
+    margin-top:34px;background:#fff;border:1px solid #dde6f1;border-radius:22px;box-shadow:var(--shadow);overflow:hidden
+  }
+  .demo-top{
+    display:flex;justify-content:space-between;align-items:center;padding:16px 18px;background:#081c36;color:#fff
+  }
+  .demo-top b{font-size:15px}.demo-top span{font-size:12px;color:#aac0d9}
+  .demo-body{display:grid;grid-template-columns:210px 1fr}
+  .demo-side{background:#0c2345;color:#c7d4e5;padding:18px 14px;min-height:590px}
+  .demo-side a{display:block;padding:11px 12px;border-radius:10px;font-size:13px;margin-bottom:5px}
+  .demo-side a.active{background:#165ee5;color:#fff}
+  .demo-main{padding:22px;background:#f7f9fd}
+  .demo-progress{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-bottom:18px}
+  .demo-progress div{
+    background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 6px;text-align:center;font-size:10px;font-weight:800;color:#62738b
+  }
+  .demo-progress div.on{background:#edf3ff;color:#2557ca;border-color:#bfd0ff}
+  .demo-grid{display:grid;grid-template-columns:1.55fr .75fr;gap:16px}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}
+  .panel h3{margin:0 0 12px;font-size:16px}
+  .reqs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+  .req{padding:7px 9px;background:#f0f4fb;border:1px solid #e2e9f3;border-radius:999px;font-size:11px;font-weight:700}
+  .matrix{width:100%;border-collapse:collapse;font-size:11px}
+  .matrix th{text-align:left;color:#77869b;font-weight:800;padding:9px 6px;border-bottom:1px solid var(--line)}
+  .matrix td{padding:11px 6px;border-bottom:1px solid #edf1f6;vertical-align:top}
+  .matrix b{font-size:11px}
+  .right-card{border:1px solid var(--line);border-radius:13px;padding:14px;margin-bottom:12px;background:#fff}
+  .right-card h4{margin:0 0 8px;font-size:13px}
+  .right-card p{font-size:11px;line-height:1.55;color:#66758a;margin:4px 0}
+  .score{font-size:28px;font-weight:900;color:#4c54df}
+  .bar{height:7px;background:#e9eef6;border-radius:20px;overflow:hidden}.bar i{display:block;width:92%;height:100%;background:linear-gradient(90deg,#3bbd83,#654cff)}
+  .learning{
+    margin-top:15px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px
+  }
+  .mini{
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;font-size:11px;color:#68778a
+  }
+  .mini b{display:block;color:#203651;margin-bottom:6px;font-size:12px}
+  .cta{
+    background:linear-gradient(135deg,#071a33,#112c55 65%,#2c257b);
+    color:#fff;border-radius:26px;padding:52px;display:grid;grid-template-columns:1.1fr .9fr;gap:32px;align-items:center
+  }
+  .cta h2{font-size:40px;line-height:1.05;margin:0 0 14px;letter-spacing:-.035em}
+  .cta p{color:#c4d2e6;line-height:1.6;margin:0}
+  .cta-box{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:20px}
+  .cta-box div{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.12);font-size:13px}
+  .cta-box div:last-child{border:0}
+  footer{padding:28px 0 42px;color:#7b899b;font-size:13px}
+  .modal{
+    position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,13,29,.62);z-index:100;padding:20px
+  }
+  .modal.open{display:flex}
+  .modal-card{
+    width:min(980px,96vw);max-height:92vh;overflow:auto;background:#fff;border-radius:22px;box-shadow:0 30px 90px rgba(0,0,0,.35)
+  }
+  .modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line)}
+  .close{border:0;background:#eef2f8;width:36px;height:36px;border-radius:10px;cursor:pointer}
+  .wizard{padding:24px}
+  .wizard-step{display:none}.wizard-step.active{display:block}
+  .choices{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+  .choice{
+    border:1px solid var(--line);border-radius:14px;padding:18px;cursor:pointer;background:#fff;text-align:left
+  }
+  .choice:hover,.choice.selected{border-color:#6f79ff;background:#f5f5ff}
+  .choice b{display:block;margin-bottom:4px}.choice small{color:#718198}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+  label{font-size:12px;font-weight:800;color:#4b5b71}
+  select,input{
+    width:100%;margin-top:6px;border:1px solid var(--line);border-radius:10px;padding:12px;background:#fff;color:#253b57
+  }
+  .wizard-actions{display:flex;justify-content:space-between;gap:12px;margin-top:22px}
+  @media(max-width:960px){
+    .nav-links{display:none}
+    .hero-grid,.cta{grid-template-columns:1fr}
+    .architecture{grid-template-columns:repeat(3,1fr)}
+    .feature-grid{grid-template-columns:1fr 1fr}
+    .demo-body{grid-template-columns:1fr}
+    .demo-side{display:none}
+    .demo-grid{grid-template-columns:1fr}
+  }
+  @media(max-width:640px){
+    .nav-actions .btn-soft{display:none}
+    .hero{padding-top:54px}
+    .architecture,.feature-grid,.choices,.form-grid{grid-template-columns:1fr}
+    .demo-progress{grid-template-columns:repeat(3,1fr)}
+    .learning{grid-template-columns:1fr}
+    .cta{padding:30px}
+    .cta h2{font-size:32px}
+  }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="#" class="brand"><span class="brand-mark">✦</span>LabPro<span style="color:#5f59ff">AI</span><small>by Lab Pro</small></a>
+    <div class="nav-links">
+      <a href="#platform">Platform</a>
+      <a href="#how">How it works</a>
+      <a href="#demo">Demo</a>
+      <a href="#why">Why LabProAI</a>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-soft" onclick="document.querySelector('#demo').scrollIntoView()">View Platform</button>
+      <button class="btn btn-primary" onclick="openWizard()">Start a Project</button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="eyebrow">AI-assisted technical selection • specialist-in-the-loop</div>
+      <h1>From laboratory need to <span class="gradient">defensible decision.</span></h1>
+      <p>LabProAI helps technical buyers translate an application into requirements, evaluate products against those requirements, surface evidence and uncertainty, involve a specialist when needed, and move the approved configuration into quoting, supply continuity and reusable institutional knowledge.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="openWizard()">Try the Guided Demo →</button>
+        <button class="btn btn-outline" onclick="document.querySelector('#demo').scrollIntoView()">See Decision Workspace</button>
+      </div>
+      <div class="micro">
+        <span>Application-led, not catalog-led</span>
+        <span>PASS / VERIFY / FAIL logic</span>
+        <span>Open before sign-in</span>
+        <span>BOM + specialist handoff</span>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-card-head">
+        <b>ISO 5 Semiconductor Assembly Area</b>
+        <div class="window-dots"><i></i><i></i><i></i></div>
+      </div>
+      <div class="hero-card-body">
+        <div class="project-label">Decision confidence / trust layer</div>
+        <div class="trust-grid">
+          <div class="trust-item"><b>Application Fit</b><small>High</small></div>
+          <div class="trust-item"><b>Material Compatibility</b><small>High</small></div>
+          <div class="trust-item"><b>Supplier Evidence</b><small style="color:#c97e00">Medium</small></div>
+        </div>
+        <div class="decision-row"><b>ESD Fine-Tip Tweezers</b><span class="pill pass">PASS</span><span>ESD safe • ISO 5 compatible</span></div>
+        <div class="decision-row"><b>IPA Cleanroom Wiper</b><span class="pill verify">VERIFY</span><span>Compatibility evidence needs confirmation</span></div>
+        <div class="decision-row"><b>PVC Garment</b><span class="pill fail">FAIL</span><span>Conflicts with “No PVC” requirement</span></div>
+        <div class="confidence"><span>Overall confidence</span><span style="font-size:26px;color:#5952e6">92%</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="platform">
+  <div class="container">
+    <div class="section-kicker">The platform thesis</div>
+    <h2 class="section-title">Not another AI product finder.</h2>
+    <p class="section-lead">The large distributors can win on breadth. LabProAI is designed to win on technical depth, context, transparency and continuity — the difficult space between “what are you trying to do?” and “this is the configuration we can defend and supply.”</p>
+    <div class="feature-grid">
+      <div class="feature"><div class="feature-icon">⌁</div><h3>Application-first intake</h3><p>Start with process and operating environment, not manufacturer or SKU. “Not sure” becomes a useful input, not a dead end.</p></div>
+      <div class="feature"><div class="feature-icon">✓</div><h3>Decision logic</h3><p>Products are classified as PASS, VERIFY or FAIL against stated requirements so the user sees qualification, uncertainty and exclusion.</p></div>
+      <div class="feature"><div class="feature-icon">◎</div><h3>Trust & evidence</h3><p>Show why a recommendation is credible: application fit, material compatibility, standards, supplier documentation and specialist validation.</p></div>
+      <div class="feature"><div class="feature-icon">↺</div><h3>Human learning loop</h3><p>When a specialist changes an AI recommendation, capture the reason and make that decision part of future institutional knowledge.</p></div>
+      <div class="feature"><div class="feature-icon">◫</div><h3>Customer memory</h3><p>Preserve approved standards, prior decisions, preferred products and application history so every interaction starts smarter.</p></div>
+      <div class="feature"><div class="feature-icon">∞</div><h3>Supply continuity</h3><p>Connect the approved technical decision to BOM, quote, qualified alternatives, replenishment and eventual VMI opportunity.</p></div>
+      <div class="feature"><div class="feature-icon">⇄</div><h3>Supplier intelligence</h3><p>Track preferred sources, qualified alternates, documentation readiness and supply risk so resilience does not require the customer to manage unnecessary complexity.</p></div>
+      <div class="feature"><div class="feature-icon">◌</div><h3>Open intelligence</h3><p>Let prospects receive useful technical guidance before sign-in. Authentication becomes a context upgrade — adding approved products, pricing, history, standards and VMI — rather than a wall.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="how" style="background:#eef3f9">
+  <div class="container">
+    <div class="section-kicker">Customer journey</div>
+    <h2 class="section-title">One intelligence layer across the entire technical buying decision.</h2>
+    <div class="architecture">
+      <div class="arch-step"><div class="num">1</div><b>DISCOVER</b><small>Understand the need and application intent.</small></div>
+      <div class="arch-step"><div class="num">2</div><b>PLAN</b><small>Define environment, process and technical requirements.</small></div>
+      <div class="arch-step"><div class="num">3</div><b>COMPLY</b><small>Surface standards, flags and verification points.</small></div>
+      <div class="arch-step"><div class="num">4</div><b>SELECT</b><small>Evaluate products and qualified alternatives.</small></div>
+      <div class="arch-step"><div class="num">5</div><b>CONNECT</b><small>Bring in specialists where uncertainty or application depth matters.</small></div>
+      <div class="arch-step"><div class="num">6</div><b>SUPPLY</b><small>Quote, BOM, alternatives, continuity, replenishment and VMI.</small></div>
+      <div class="arch-step"><div class="num">7</div><b>LEARN</b><small>Capture approved choices, specialist corrections and supply outcomes.</small></div>
+    </div>
+    <div class="engage"><b>ENGAGE</b> runs across the entire experience — selectors, planners, comparison tools, standards guidance and specialist interaction. <b>TRUST &amp; EVIDENCE</b> persist across every stage, while authenticated accounts add customer-specific memory, approvals, pricing and supply context.</div>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="container">
+    <div class="section-kicker">Interactive concept</div>
+    <h2 class="section-title">A decision workspace designed to make the reasoning immediately understandable.</h2>
+    <p class="section-lead">The screen below illustrates the destination surface — not just recommendations, but requirements, evidence quality, exclusions, specialist learning, customer memory, supplier alternatives and supply continuity. In a production flow, this workspace is reached after the user has created the underlying decision context.</p>
+
+    <div class="demo-shell">
+      <div class="demo-top"><div><b>LabProAI</b> <span>• Project: ISO 5 Semiconductor Assembly Area</span></div><span>Decision Workspace</span></div>
+      <div class="demo-body">
+        <aside class="demo-side">
+          <a class="active">Project Overview</a>
+          <a>Product Finder</a>
+          <a>Chemical Compatibility</a>
+          <a>Standards & Compliance</a>
+          <a>Specialist Reviews</a>
+          <a>Supply Planning</a>
+          <a>Saved Decisions</a>
+        </aside>
+        <main class="demo-main">
+          <div class="demo-progress">
+            <div>DISCOVER</div><div>PLAN</div><div>COMPLY</div><div>SELECT</div><div>CONNECT</div><div>SUPPLY</div><div class="on">LEARN</div>
+          </div>
+
+          <div class="demo-grid">
+            <div class="panel">
+              <h3>Requirements Summary</h3>
+              <div class="reqs">
+                <span class="req">ISO 5</span><span class="req">ESD Control</span><span class="req">Low Particle Generation</span>
+                <span class="req">IPA Compatible</span><span class="req">No PVC</span>
+              </div>
+              <h3 style="margin-top:18px">Decision Matrix</h3>
+              <table class="matrix">
+                <thead><tr><th>Product</th><th>Status</th><th>Why</th><th>Evidence</th></tr></thead>
+                <tbody>
+                  <tr><td><b>ESD Fine-Tip Tweezers</b><br>Precision handling</td><td><span class="pill pass">PASS</span></td><td>ESD safe, low particle, IPA compatible</td><td>Supplier cert + technical data</td></tr>
+                  <tr><td><b>Low-Particle IPA Wipers</b><br>Critical cleaning</td><td><span class="pill verify">VERIFY</span></td><td>Strong fit; one compatibility point needs specialist confirmation</td><td>TDS + compatibility letter</td></tr>
+                  <tr><td><b>Nitrile Cleanroom Gloves</b><br>Operator PPE</td><td><span class="pill pass">PASS</span></td><td>Low particulate, no PVC, application fit</td><td>COO + manufacturer data</td></tr>
+                  <tr><td><b>PVC-Zip Coverall</b><br>Garment</td><td><span class="pill fail">FAIL</span></td><td>Contains PVC; conflicts with stated requirement</td><td>Material disclosure</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div>
+              <div class="right-card">
+                <h4>Decision Confidence</h4>
+                <div class="score">92%</div>
+                <p>Strong alignment across application, material, evidence and prior approval context.</p>
+                <div class="bar"><i></i></div>
+              </div>
+              <div class="right-card">
+                <h4>Customer Memory</h4>
+                <p><b>Prior standards:</b> ISO 5 • ESD control</p>
+                <p><b>Previous decision:</b> Lower-particle wiper preferred for critical IPA cleaning.</p>
+              </div>
+              <div class="right-card">
+                <h4>Supply Continuity</h4>
+                <p>✓ Preferred supply path identified</p>
+                <p>✓ Qualified alternate defined</p>
+                <p>✓ Supply risk can be surfaced before disruption</p>
+                <p>✓ Recurring consumption / VMI opportunity detected</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="learning">
+            <div class="mini"><b>Excluded Products</b>PVC garment excluded because it violates the customer’s “No PVC” requirement.</div>
+            <div class="mini"><b>Specialist Learning Loop</b>Specialist replaced Wiper A with Wiper B for lower particle generation during critical IPA cleaning.</div>
+            <div class="mini"><b>Supplier Intelligence</b>Preferred source, qualified alternate, documentation status and supply risk can become part of the decision record.</div>
+            <div class="mini"><b>Commercial Next Step</b>Configuration can move directly to specialist review, BOM, quote and recurring supply planning.</div>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="alert('Demo action: configuration approved and ready for quote.')">Approve Configuration</button>
+            <button class="btn btn-outline" onclick="alert('Demo action: structured specialist review brief created.')">Request Specialist Review</button>
+            <button class="btn btn-outline" onclick="alert('Demo action: BOM created and ready to export.')">Export BOM</button>
+            <button class="btn btn-outline" onclick="alert('Demo action: supply planning workflow opened.')">Create Supply Plan</button>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="why">
+  <div class="container">
+    <div class="section-kicker">Why this matters</div>
+    <h2 class="section-title">The moat is not the chatbot. It is the structured decision intelligence underneath it.</h2>
+    <p class="section-lead">The long-term asset is the relationship between application, requirement, evidence, product, supplier, specialist judgment, customer approval and actual purchase outcome. Each reviewed decision can make the next recommendation more useful, more customer-specific and more resilient.</p>
+    <div class="feature-grid">
+      <div class="feature"><div class="feature-icon">⛓</div><h3>Knowledge graph</h3><p>Application → environment → requirement → product attribute → evidence → product → alternative → outcome.</p></div>
+      <div class="feature"><div class="feature-icon">◉</div><h3>Decision record</h3><p>Preserve what was considered, what was rejected, why it was approved, and who verified it.</p></div>
+      <div class="feature"><div class="feature-icon">↗</div><h3>Commercial flywheel</h3><p>Selection becomes specialist conversation; approved configuration becomes quote; recurring configuration becomes supply relationship.</p></div>
+      <div class="feature"><div class="feature-icon">⇆</div><h3>Two connected knowledge layers</h3><p>Technical knowledge links application → environment → requirement → product. Commercial/supply knowledge links customer → approved product → supplier → purchase → performance → alternative.</p></div>
+      <div class="feature"><div class="feature-icon">◇</div><h3>Expertise becomes an asset</h3><p>When a specialist accepts, changes or rejects a recommendation and records why, that expertise is captured as reusable institutional knowledge rather than consumed once.</p></div>
+      <div class="feature"><div class="feature-icon">⛓</div><h3>Resilience without supplier sprawl</h3><p>The strategic objective is not “more vendors.” It is reliable primary partners supported by qualified alternatives — one trusted relationship with multiple qualified supply paths where needed.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="cta">
+      <div>
+        <h2>A focused specialist does not have to out-catalog the giants.</h2>
+        <p>LabProAI demonstrates another path: understand the customer's technical requirement more deeply, make the decision transparent, preserve the knowledge, coordinate reliable supply paths, and carry the approved solution into recurring supply.</p>
+      </div>
+      <div class="cta-box">
+        <div><span>Primary wedge</span><b>Complex technical selection</b></div>
+        <div><span>Human role</span><b>Specialist validation</b></div>
+        <div><span>Customer output</span><b>Decision + BOM + quote path</b></div>
+        <div><span>Supplier model</span><b>Reliable primary + qualified alternatives</b></div>
+        <div><span>Long-term moat</span><b>Knowledge + memory + outcomes</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">LabProAI concept demo • General strategic and product review • Illustrative product, evidence, availability and supply data.</div>
+</footer>
+
+
+<div class="modal" id="wizardModal" aria-hidden="true">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <b>Try the LabProAI Guided Demo</b>
+        <div style="font-size:12px;color:#7a899b;margin-top:3px">Start from a product category or a broader capability — no pre-created project.</div>
+      </div>
+      <button class="close" onclick="closeWizard()">✕</button>
+    </div>
+    <div class="wizard">
+      <div class="wizard-step active" data-step="1">
+        <div class="section-kicker">Step 1 — Start with the need</div>
+        <h2 style="margin:8px 0 4px">What do you want help deciding?</h2>
+        <p style="color:#6d7b8f;margin:0">The demo begins blank. Your choice determines the questions and rules that follow.</p>
+        <div class="choices" id="startChoices">
+          <button class="choice selected" data-path="gloves" onclick="choosePath(this)"><b>Gloves</b><small>Cleanroom, chemical exposure, cuff and material restrictions</small></button>
+          <button class="choice" data-path="wipers" onclick="choosePath(this)"><b>Wipers</b><small>Cleanliness class, solvent, particles, NVR and absorbency</small></button>
+          <button class="choice" data-path="tweezers" onclick="choosePath(this)"><b>Tweezers</b><small>ESD, geometry, magnetic restrictions and environment</small></button>
+          <button class="choice" data-path="capability" onclick="choosePath(this)"><b>Plan a Capability</b><small>Start with a broader setup and identify the required product categories</small></button>
+        </div>
+        <div class="wizard-actions"><span></span><button class="btn btn-primary" onclick="prepareStep2()">Continue →</button></div>
+      </div>
+
+      <div class="wizard-step" data-step="2">
+        <div class="section-kicker">Step 2 — Define requirements</div>
+        <h2 id="step2Title" style="margin:8px 0 4px">Tell us about the application.</h2>
+        <p id="step2Lead" style="color:#6d7b8f;margin:0">Only questions that can materially affect the ruling are shown.</p>
+        <div class="form-grid" id="dynamicFields"></div>
+        <div style="margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:14px;background:#f8fbff">
+          <b style="font-size:12px">Requirements detected</b>
+          <div class="reqs" id="liveRequirements" style="margin:10px 0 0"></div>
+        </div>
+        <div class="wizard-actions"><button class="btn btn-soft" onclick="nextStep(1)">← Back</button><button class="btn btn-primary" onclick="evaluateDemo()">Evaluate Options →</button></div>
+      </div>
+
+      <div class="wizard-step" data-step="3">
+        <div class="section-kicker">Step 3 — Decision logic</div>
+        <h2 id="resultTitle" style="margin:8px 0 4px">Qualification result</h2>
+        <p style="color:#68778a;line-height:1.65">Illustrative rules show how the same product can move between PASS, VERIFY and FAIL when the requirement changes. A production system would use validated product, standards and supplier evidence.</p>
+        <div id="guidedResults" style="margin-top:18px;padding:18px;border:1px solid var(--line);border-radius:15px;background:#f8fbff"></div>
+        <div style="margin-top:14px;padding:14px;border:1px solid #d9e4ff;border-radius:14px;background:#f7f6ff">
+          <b style="font-size:12px">What happens next?</b>
+          <p style="font-size:12px;color:#66758a;line-height:1.55;margin:7px 0 0">A viable selection can be saved into a project. Only then does the richer Decision Workspace become meaningful — adding evidence, alternatives, specialist validation, customer memory, BOM, supply continuity and LEARN history.</p>
+        </div>
+        <div class="wizard-actions"><button class="btn btn-soft" onclick="nextStep(2)">← Change Inputs</button><button class="btn btn-primary" onclick="closeWizard();document.querySelector('#demo').scrollIntoView()">See Destination Workspace →</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let guidedPath = 'gloves';
+
+const pathConfigs = {
+  gloves: {
+    title: 'Cleanroom & Laboratory Glove Selection',
+    lead: 'Environment, chemical exposure, material restrictions and cuff requirements drive the ruling.',
+    fields: [
+      ['environment','Environment',[['iso5','ISO 5'],['iso7','ISO 7'],['general','General lab'],['unknown','Not sure']]],
+      ['chemical','Chemical exposure',[['ipa','IPA'],['acetone','Acetone'],['none','None'],['unknown','Not sure']]],
+      ['avoid','Material restriction',[['latex','Latex-free'],['pvc','No PVC'],['both','No latex / PVC'],['none','None specified']]],
+      ['cuff','Cuff requirement',[['12','12 inch'],['9','9 inch'],['gauntlet','Gauntlet'],['unknown','Not sure']]]
+    ]
+  },
+  wipers: {
+    title: 'Cleanroom & Laboratory Wiper Selection',
+    lead: 'Cleanliness class, solvent and contamination priority determine which wipers remain eligible.',
+    fields: [
+      ['environment','Environment',[['iso5','ISO 5'],['iso7','ISO 7'],['general','General area'],['unknown','Not sure']]],
+      ['chemical','Solvent',[['ipa','IPA'],['acetone','Acetone'],['water','DI water'],['none','Dry wipe']]],
+      ['priority','Primary concern',[['particles','Low particle generation'],['nvr','Low NVR'],['absorbency','Absorbency'],['cost','Cost']]],
+      ['surface','Cleaning target',[['critical','Critical surface'],['tooling','Tooling'],['workstation','Workstation'],['general','General equipment']]]
+    ]
+  },
+  tweezers: {
+    title: 'Precision Tweezer Selection',
+    lead: 'ESD sensitivity, tip geometry, magnetic restrictions and cleanroom environment drive qualification.',
+    fields: [
+      ['esd','ESD-sensitive devices',[['yes','Yes'],['no','No'],['unknown','Not sure']]],
+      ['tip','Tip geometry',[['fine','Fine point'],['flat','Flat'],['curved','Curved'],['unknown','Not sure']]],
+      ['environment','Environment',[['iso5','ISO 5'],['iso7','ISO 7'],['general','General lab'],['unknown','Not sure']]],
+      ['magnetic','Non-magnetic required',[['yes','Yes'],['no','No'],['unknown','Not sure']]]
+    ]
+  },
+  capability: {
+    title: 'Plan a Laboratory Capability',
+    lead: 'Start with the broader operating context. LabProAI can translate this into product-category and requirement workstreams.',
+    fields: [
+      ['application','Application',[['semiconductor','Semiconductor assembly'],['biotech','Biotechnology'],['medical','Medical device'],['cleanroom','Cleanroom operations']]],
+      ['environment','Environment',[['iso5','ISO 5'],['iso7','ISO 7'],['general','Controlled / non-classified'],['unknown','Not sure']]],
+      ['esd','ESD-sensitive',[['yes','Yes'],['no','No'],['unknown','Not sure']]],
+      ['chemical','Solvent / chemistry',[['ipa','IPA'],['acetone','Acetone'],['none','None'],['unknown','Not sure']]]
+    ]
+  }
+};
+
+function openWizard(){
+  document.getElementById('wizardModal').classList.add('open');
+  document.getElementById('wizardModal').setAttribute('aria-hidden','false');
+  nextStep(1);
+}
+function closeWizard(){
+  document.getElementById('wizardModal').classList.remove('open');
+  document.getElementById('wizardModal').setAttribute('aria-hidden','true');
+}
+function nextStep(n){
+  document.querySelectorAll('.wizard-step').forEach(el=>el.classList.remove('active'));
+  document.querySelector('.wizard-step[data-step="'+n+'"]').classList.add('active');
+}
+function choosePath(btn){
+  document.querySelectorAll('#startChoices .choice').forEach(x=>x.classList.remove('selected'));
+  btn.classList.add('selected');
+  guidedPath = btn.dataset.path;
+}
+function prepareStep2(){
+  const cfg = pathConfigs[guidedPath];
+  document.getElementById('step2Title').textContent = cfg.title;
+  document.getElementById('step2Lead').textContent = cfg.lead;
+  document.getElementById('dynamicFields').innerHTML = cfg.fields.map(f => {
+    const opts = f[2].map(o=>'<option value="'+o[0]+'">'+o[1]+'</option>').join('');
+    return '<label>'+f[1]+'<select id="gf_'+f[0]+'" onchange="updateDetectedRequirements()">'+opts+'</select></label>';
+  }).join('');
+  updateDetectedRequirements();
+  nextStep(2);
+}
+function val(id){
+  const el = document.getElementById('gf_'+id);
+  return el ? el.value : '';
+}
+function detectedRequirements(){
+  let r = [];
+  const env = val('environment');
+  const chem = val('chemical');
+  if(env==='iso5') r.push('ISO 5 cleanliness');
+  if(env==='iso7') r.push('ISO 7 controlled environment');
+  if(val('esd')==='yes') r.push('ESD control');
+  if(chem==='ipa') r.push('IPA compatibility');
+  if(chem==='acetone') r.push('Acetone compatibility');
+  if(val('avoid')==='latex' || val('avoid')==='both') r.push('Latex-free');
+  if(val('avoid')==='pvc' || val('avoid')==='both') r.push('No PVC');
+  if(val('priority')==='particles') r.push('Low particle generation');
+  if(val('priority')==='nvr') r.push('Low NVR');
+  if(val('magnetic')==='yes') r.push('Non-magnetic');
+  if(val('tip')==='fine') r.push('Fine-tip geometry');
+  if(val('tip')==='flat') r.push('Flat-tip geometry');
+  if(val('tip')==='curved') r.push('Curved-tip geometry');
+  if(val('cuff')==='12') r.push('12-inch cuff');
+  if(val('cuff')==='gauntlet') r.push('Gauntlet coverage');
+  return r;
+}
+function updateDetectedRequirements(){
+  const r = detectedRequirements();
+  document.getElementById('liveRequirements').innerHTML = r.length ? r.map(x=>'<span class="req">'+x+'</span>').join('') : '<span class="req">No hard requirement triggered yet</span>';
+}
+function row(name,status,why){
+  return '<div class="decision-row"><b>'+name+'</b><span class="pill '+status.toLowerCase()+'">'+status+'</span><span>'+why+'</span></div>';
+}
+function evaluateDemo(){
+  let html = '';
+  let title = '';
+  if(guidedPath==='gloves'){
+    title = 'Glove qualification result';
+    const env=val('environment'), chem=val('chemical'), avoid=val('avoid'), cuff=val('cuff');
+    html += row('Cleanroom Nitrile — 12"','PASS','Strong cleanroom candidate for the stated material restrictions.');
+    html += row('House Nitrile — 4 mil', chem==='acetone'?'FAIL':chem==='ipa'?'VERIFY':'PASS', chem==='acetone'?'Insufficient documented protection for stated acetone exposure.':chem==='ipa'?'IPA breakthrough data at this gauge needs confirmation.':'Cost-optimized candidate for non-solvent use.');
+    html += row('Latex Exam Glove', (avoid==='latex'||avoid==='both'||env==='iso5'||cuff==='12'||cuff==='gauntlet')?'FAIL':'PASS', (avoid==='latex'||avoid==='both')?'Contains latex — conflicts with stated restriction.':env==='iso5'?'Not qualified for the stated ISO 5 environment.':'General-purpose option where cleanroom/latex constraints do not apply.');
+  } else if(guidedPath==='wipers'){
+    title = 'Wiper qualification result';
+    const env=val('environment'), chem=val('chemical'), pri=val('priority');
+    html += row('Ultra-Low-Particle Polyester','PASS','Strong low-particle candidate for controlled-environment cleaning.');
+    html += row('IPA Polyester Wiper',(env==='iso5'&&pri==='particles')||chem==='acetone'?'VERIFY':'PASS',(env==='iso5'&&pri==='particles')?'Technically suitable; specialist comparison recommended for the critical-particle requirement.':chem==='acetone'?'Acetone compatibility requires confirmation.':'Good fit for the stated cleaning context.');
+    html += row('Cotton-Blend Utility',env==='iso5'?'FAIL':(env==='iso7'&&pri==='particles')?'VERIFY':'PASS',env==='iso5'?'Cellulose blend conflicts with the stated ISO 5 particle requirement.':'Acceptable only where particle generation is less critical.');
+  } else if(guidedPath==='tweezers'){
+    title = 'Tweezer qualification result';
+    const esd=val('esd'), tip=val('tip'), env=val('environment'), mag=val('magnetic');
+    html += row('ESD Fine-Tip Tweezer',(tip==='flat'||tip==='curved'||mag==='yes'||esd==='unknown')?'VERIFY':'PASS',(tip==='flat'||tip==='curved')?'ESD fit is strong, but the requested tip geometry differs.':mag==='yes'?'Confirm non-magnetic requirement for the exact alloy.':'Strong ESD precision-handling candidate.');
+    html += row('General Stainless Fine-Tip',(esd==='yes'||tip==='flat'||tip==='curved')?'FAIL':env==='iso5'?'VERIFY':'PASS',esd==='yes'?'Not ESD-qualified for the stated handling.':(tip==='flat'||tip==='curved')?'Tip geometry does not meet the stated requirement.':env==='iso5'?'ISO 5 suitability needs documentation.':'General-purpose candidate.');
+    html += row('Ceramic Non-Magnetic Fine-Tip',(tip==='flat'||tip==='curved')?'FAIL':esd==='yes'?'VERIFY':'PASS',(tip==='flat'||tip==='curved')?'Fine-tip geometry does not match the request.':esd==='yes'?'Verify static-dissipative qualification for ESD-sensitive use.':'Strong non-magnetic fine-tip candidate.');
+  } else {
+    title = 'Capability-planning result';
+    const app=val('application'), env=val('environment'), esd=val('esd'), chem=val('chemical');
+    const categories = ['Gloves','Wipers','Garments / PPE'];
+    if(app==='semiconductor' || esd==='yes') categories.unshift('Tweezers / Precision Tools');
+    html += '<div style="font-size:12px;color:#68778a;line-height:1.6;margin-bottom:10px">The broader setup has been translated into product workstreams. Each category would then run its own deterministic selector before a project-level Decision Workspace is created.</div>';
+    html += categories.map(c=>row(c,'VERIFY','Category identified — configure technical requirements before final product selection.')).join('');
+  }
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('guidedResults').innerHTML = html;
+  nextStep(3);
+}
+
+document.getElementById('wizardModal').addEventListener('click',e=>{
+  if(e.target.id==='wizardModal') closeWizard();
+});
+</script>
+
+</body>
+</html>
