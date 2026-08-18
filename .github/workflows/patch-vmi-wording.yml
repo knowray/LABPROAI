@@ -1,0 +1,37 @@
+name: Patch VMI wording
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/patch-vmi-wording.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update VMI wording
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          html = p.read_text(encoding='utf-8')
+          html = html.replace('eventual VMI opportunity', 'VMI opportunity')
+          html = html.replace('and eventually VMI.', 'and VMI.')
+          html = html.replace('where Lab Pro VMI can', 'where VMI can')
+          p.write_text(html, encoding='utf-8')
+          PY
+      - name: Commit wording update
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Remove eventual from VMI wording"
+          git push
