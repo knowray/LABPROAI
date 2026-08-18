@@ -260,6 +260,50 @@
     color:#43536a;font-size:14px;line-height:1.55
   }
 
+  .specialist-modal{
+  position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+  background:rgba(3,13,29,.68);z-index:120;padding:20px
+}
+.specialist-modal.open{display:flex}
+.specialist-shell{
+  width:min(980px,96vw);max-height:92vh;overflow:auto;background:#f7f9fd;
+  border-radius:22px;box-shadow:0 28px 80px rgba(0,0,0,.30)
+}
+.specialist-top{
+  padding:18px 20px;background:linear-gradient(135deg,#071a33,#12315c);color:#fff;
+  display:flex;justify-content:space-between;gap:18px;align-items:center;position:sticky;top:0;z-index:2
+}
+.specialist-top h3{margin:2px 0;font-size:20px}
+.specialist-top small{color:#b8c9df}
+.specialist-close{
+  border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;
+  width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:18px
+}
+.specialist-body{padding:20px}
+.brief-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.brief-meta div{padding:11px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:11px;color:#6c7b90}
+.brief-meta b{display:block;color:#253a55;margin-bottom:4px}
+.brief-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.brief-block{border:1px solid var(--line);border-radius:14px;padding:15px;background:#fff}
+.brief-block.full{grid-column:1/-1}
+.brief-block h4{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#445b79}
+.brief-block p{font-size:12px;line-height:1.55;color:#64748a;margin:6px 0}
+.brief-list{margin:0;padding-left:18px;color:#5f7087;font-size:12px;line-height:1.6}
+.brief-answers{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.brief-answer{padding:9px 10px;border-radius:10px;background:#f7f9fc;font-size:11px;color:#5e6f85}
+.brief-answer b{display:block;color:#263b57;margin-bottom:2px}
+.brief-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.brief-action{padding:11px;border-radius:11px;background:#f4f7fc;border:1px solid #e2e9f3;font-size:11px;color:#53677f}
+.brief-action b{display:block;color:#213a58;margin-bottom:3px}
+.brief-note{margin-top:14px;padding:12px 14px;border-left:3px solid #5f59ff;background:#f7f6ff;border-radius:0 10px 10px 0;font-size:11px;color:#5b6880;line-height:1.55}
+.brief-results .decision-row{grid-template-columns:1.15fr .45fr 1.4fr}
+@media(max-width:700px){
+  .brief-meta{grid-template-columns:1fr 1fr}
+  .brief-grid{grid-template-columns:1fr}
+  .brief-block.full{grid-column:auto}
+  .brief-answers,.brief-actions{grid-template-columns:1fr}
+}
+
   .modal{
     position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,13,29,.62);z-index:100;padding:20px
   }
@@ -542,7 +586,7 @@
                 <p>✓ Supply confidence: High</p>
                 <p>✓ Qualified alternates available</p>
                 <p><b>VMI suitability: Good candidate</b></p>
-                <button class="btn btn-soft" style="width:100%;margin-top:8px" onclick="alert('Demo action: Lab Pro VMI discussion initiated from the approved configuration.')">Discuss Lab Pro VMI →</button>
+                <button class="btn btn-soft" style="width:100%;margin-top:8px" onclick="alert('Demo action: VMI discussion initiated from the approved configuration.')">Discuss VMI →</button>
               </div>
             </div>
           </div>
@@ -556,7 +600,7 @@
 
           <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
             <button class="btn btn-primary" onclick="alert('Demo action: configuration approved and ready for quote.')">Approve Configuration</button>
-            <button class="btn btn-outline" onclick="alert('Demo action: structured specialist review brief created.')">Request Specialist Review</button>
+            <button class="btn btn-outline" onclick="openWorkspaceSpecialistBrief()">Request Specialist Review</button>
             <button class="btn btn-outline" onclick="alert('Demo action: BOM created and ready to export.')">Export BOM</button>
             <button class="btn btn-outline" onclick="alert('Demo action: recurring usage, reorder planning and VMI suitability workflow opened.')">Create Supply Plan</button>
           </div>
@@ -720,9 +764,22 @@
           <b style="font-size:12px">What happens next?</b>
           <p style="font-size:12px;color:#66758a;line-height:1.55;margin:7px 0 0">A viable selection can be saved into a project. Only then does the richer Decision Workspace become meaningful — adding evidence, alternatives, specialist validation, customer memory, BOM, supply continuity and LEARN history.</p>
         </div>
-        <div class="wizard-actions"><button class="btn btn-soft" onclick="nextStep(2)">← Change Inputs</button><button class="btn btn-primary" onclick="closeWizard();document.querySelector('#demo').scrollIntoView()">See Destination Workspace →</button></div>
+        <div class="wizard-actions"><button class="btn btn-soft" onclick="nextStep(2)">← Change Inputs</button><button class="btn btn-outline" onclick="openSpecialistBrief()">View Specialist Brief</button><button class="btn btn-primary" onclick="closeWizard();document.querySelector('#demo').scrollIntoView()">See Destination Workspace →</button></div>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="specialist-modal" id="specialistModal">
+  <div class="specialist-shell">
+    <div class="specialist-top">
+      <div>
+        <small id="specialistModalContext">LabProAI • Guided Session Handoff</small>
+        <h3 id="specialistModalTitle">Technical Procurement Brief</h3>
+      </div>
+      <button class="specialist-close" onclick="closeSpecialistBrief()">×</button>
+    </div>
+    <div class="specialist-body" id="specialistBriefBody"></div>
   </div>
 </div>
 
@@ -1030,6 +1087,211 @@ function evaluateDemo(){
   document.getElementById('guidedResults').innerHTML = html;
   nextStep(3);
 }
+
+function specialistSelectedLabel(fieldId){
+  const cfg = pathConfigs[guidedPath];
+  const field = cfg.fields.find(f=>f[0]===fieldId);
+  if(!field) return '';
+  const selected = field[2].find(o=>o[0]===val(fieldId));
+  return selected ? selected[1] : '';
+}
+function specialistAnswerPairs(){
+  const cfg = pathConfigs[guidedPath];
+  return cfg.fields.map(f=>({
+    field:f[1],
+    value:specialistSelectedLabel(f[0]) || 'Not provided',
+    raw:val(f[0])
+  }));
+}
+function specialistOpenQuestions(){
+  const answers = specialistAnswerPairs();
+  const q = [];
+  answers.forEach(a=>{
+    if(a.raw==='unknown') q.push('Clarify '+a.field.toLowerCase()+' before final recommendation.');
+  });
+  const resultHtml = document.getElementById('guidedResults').innerHTML;
+  if(resultHtml.indexOf('VERIFY')>-1) q.push('Resolve VERIFY flags and confirm supporting supplier / manufacturer documentation.');
+  if(val('environment')==='iso5') q.push('Confirm exact ISO 5 / cleanroom suitability documentation for the selected item and application.');
+  if(val('esd')==='yes') q.push('Confirm the exact ESD qualification required for the customer process and selected SKU.');
+  if(val('chemical')==='acetone') q.push('Confirm application-specific acetone compatibility / exposure data before approval.');
+  if(val('magnetic')==='yes') q.push('Verify non-magnetic performance for the exact material and item selected.');
+  if(!q.length) q.push('No hard blocker identified in the guided session; confirm final SKU, quantity, timing and documentation before quote.');
+  return q;
+}
+function openSpecialistBrief(){
+  document.getElementById('specialistModalContext').textContent = 'LabProAI • Guided Session Handoff';
+  document.getElementById('specialistModalTitle').textContent = 'Technical Procurement Brief';
+  const cfg = pathConfigs[guidedPath];
+  const reqs = detectedRequirements();
+  const answers = specialistAnswerPairs();
+  const questions = specialistOpenQuestions();
+  const results = document.getElementById('guidedResults').innerHTML;
+
+  const answerHtml = answers.map(a=>'<div class="brief-answer"><b>'+a.field+'</b>'+a.value+'</div>').join('');
+  const reqHtml = reqs.length ? reqs.map(r=>'<span class="req">'+r+'</span>').join('') : '<span class="req">No hard requirement triggered yet</span>';
+  const qHtml = questions.map(q=>'<li>'+q+'</li>').join('');
+
+  document.getElementById('specialistBriefBody').innerHTML = `
+    <div class="brief-meta">
+      <div><b>Workstream</b>${cfg.title}</div>
+      <div><b>Customer identity</b>Not yet requested — public session</div>
+      <div><b>Quantity / timing</b>Capture at handoff</div>
+      <div><b>Handoff status</b>Context prepared</div>
+    </div>
+
+    <div class="brief-grid">
+      <div class="brief-block">
+        <h4>Application context captured</h4>
+        <div class="brief-answers">${answerHtml}</div>
+      </div>
+
+      <div class="brief-block">
+        <h4>Triggered requirements</h4>
+        <div class="reqs" style="margin:0">${reqHtml}</div>
+        <p style="margin-top:12px"><b style="color:#2b405d">Compliance posture:</b> requirements are carried into review; missing evidence is not treated as proof of compliance.</p>
+      </div>
+
+      <div class="brief-block full brief-results">
+        <h4>Candidate qualification snapshot</h4>
+        ${results}
+      </div>
+
+      <div class="brief-block">
+        <h4>Evidence & compliance review</h4>
+        <ul class="brief-list">
+          <li>Carry forward PASS / VERIFY / FAIL reasoning.</li>
+          <li>Confirm supplier or manufacturer evidence for applicable standards and material claims.</li>
+          <li>Keep unresolved evidence visible until validated.</li>
+          <li>Record specialist corrections and the reason.</li>
+        </ul>
+      </div>
+
+      <div class="brief-block">
+        <h4>Open specialist questions</h4>
+        <ul class="brief-list">${qHtml}</ul>
+      </div>
+
+      <div class="brief-block full">
+        <h4>Recommended commercial next actions</h4>
+        <div class="brief-actions">
+          <div class="brief-action"><b>1. Verify</b>Close evidence / compliance gaps.</div>
+          <div class="brief-action"><b>2. Confirm</b>Preferred item and qualified alternate.</div>
+          <div class="brief-action"><b>3. Quote</b>Capture quantity, timing and commercial terms.</div>
+          <div class="brief-action"><b>4. Supply</b>Review replenishment pattern and VMI opportunity.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brief-note"><b>Sales value:</b> the specialist receives the customer's application, requirements, candidate products and unresolved questions already organized, allowing the conversation to begin at qualification and solution level rather than repeating basic intake.</div>`;
+
+  document.getElementById('specialistModal').classList.add('open');
+}
+function openWorkspaceSpecialistBrief(){
+  document.getElementById('specialistModalContext').textContent = 'LabProAI • Decision Workspace Review';
+  document.getElementById('specialistModalTitle').textContent = 'Specialist Review Request';
+
+  document.getElementById('specialistBriefBody').innerHTML = `
+    <div class="brief-meta">
+      <div><b>Project</b>ISO 5 Semiconductor Assembly Area</div>
+      <div><b>Decision confidence</b>92% — specialist verification still required where flagged</div>
+      <div><b>Quantity / timing</b>Capture before quote</div>
+      <div><b>Review status</b>Prepared for specialist</div>
+    </div>
+
+    <div class="brief-grid">
+      <div class="brief-block">
+        <h4>Application & environment</h4>
+        <div class="brief-answers">
+          <div class="brief-answer"><b>Environment</b>ISO 5 controlled environment</div>
+          <div class="brief-answer"><b>Process</b>Semiconductor assembly / precision handling</div>
+          <div class="brief-answer"><b>Cleaning context</b>Critical IPA cleaning</div>
+          <div class="brief-answer"><b>Operator need</b>Cleanroom PPE / low-particle handling</div>
+        </div>
+      </div>
+
+      <div class="brief-block">
+        <h4>Requirements carried forward</h4>
+        <div class="reqs" style="margin:0">
+          <span class="req">ISO 5</span>
+          <span class="req">ESD Control</span>
+          <span class="req">Low Particle Generation</span>
+          <span class="req">IPA Compatible</span>
+          <span class="req">No PVC</span>
+        </div>
+        <p style="margin-top:12px"><b style="color:#2b405d">Compliance posture:</b> applicable requirements and evidence status remain visible. VERIFY items are not treated as approved until the outstanding evidence or specialist question is closed.</p>
+      </div>
+
+      <div class="brief-block full">
+        <h4>Product qualification snapshot</h4>
+        <div class="decision-row">
+          <b>ESD Fine-Tip Tweezers <span class="sku"><span class="sku-label">Item #</span> <span class="sku-code">TT-ESD-7-SA</span></span></b>
+          <span class="pill pass">PASS</span>
+          <span>ESD safe, low particle, IPA compatible • Evidence: supplier certification + technical data</span>
+        </div>
+        <div class="decision-row">
+          <b>Low-Particle IPA Wipers <span class="sku"><span class="sku-label">Item #</span> <span class="sku-code">UC-IPA-909</span></span></b>
+          <span class="pill verify">VERIFY</span>
+          <span>Strong fit; one compatibility point needs specialist confirmation • Evidence: TDS + compatibility letter</span>
+        </div>
+        <div class="decision-row">
+          <b>Nitrile Cleanroom Gloves <span class="sku"><span class="sku-label">Item #</span> <span class="sku-code">NIT-ESD-M</span></span></b>
+          <span class="pill pass">PASS</span>
+          <span>Low particulate, no PVC, application fit • Evidence: COO + manufacturer data</span>
+        </div>
+        <div class="decision-row">
+          <b>PVC-Zip Coverall <span class="sku"><span class="sku-label">Item #</span> <span class="sku-code">CC-PVC-XL</span></span></b>
+          <span class="pill fail">FAIL</span>
+          <span>Excluded: contains PVC and conflicts with the stated material requirement</span>
+        </div>
+      </div>
+
+      <div class="brief-block">
+        <h4>Specialist attention required</h4>
+        <ul class="brief-list">
+          <li>Resolve the VERIFY flag on the low-particle IPA wiper.</li>
+          <li>Confirm the outstanding compatibility evidence before approval.</li>
+          <li>Confirm the selected cleanroom items against the customer's exact ISO 5 process requirements.</li>
+          <li>Preserve the PVC exclusion unless the customer requirement changes.</li>
+        </ul>
+      </div>
+
+      <div class="brief-block">
+        <h4>Context already available</h4>
+        <ul class="brief-list">
+          <li>Prior customer standards: ISO 5 and ESD control.</li>
+          <li>Previous preference: lower-particle wiper for critical IPA cleaning.</li>
+          <li>Preferred supply path and qualified alternate identified.</li>
+          <li>Recurring consumption / VMI opportunity detected.</li>
+        </ul>
+      </div>
+
+      <div class="brief-block full">
+        <h4>Recommended specialist & commercial actions</h4>
+        <div class="brief-actions">
+          <div class="brief-action"><b>1. Verify</b>Close the wiper compatibility / evidence question.</div>
+          <div class="brief-action"><b>2. Confirm</b>Finalize preferred SKUs and qualified alternates.</div>
+          <div class="brief-action"><b>3. Quote</b>Capture quantities, timing and commercial terms.</div>
+          <div class="brief-action"><b>4. Supply</b>Review replenishment cadence and VMI opportunity.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brief-note"><b>Prepared handoff:</b> the specialist receives the application context, requirements, product rulings, evidence gaps, customer memory and supply opportunity together — so the sales conversation begins with a qualified decision record rather than a cold lead.</div>
+
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;flex-wrap:wrap">
+      <button class="btn btn-soft" onclick="closeSpecialistBrief()">Close</button>
+      <button class="btn btn-primary" onclick="alert('Demo action: specialist review request sent with the Technical Procurement Brief.')">Send for Specialist Review</button>
+    </div>`;
+
+  document.getElementById('specialistModal').classList.add('open');
+}
+
+function closeSpecialistBrief(){
+  document.getElementById('specialistModal').classList.remove('open');
+}
+document.getElementById('specialistModal').addEventListener('click',e=>{
+  if(e.target.id==='specialistModal') closeSpecialistBrief();
+});
 
 document.getElementById('wizardModal').addEventListener('click',e=>{
   if(e.target.id==='wizardModal') closeWizard();
