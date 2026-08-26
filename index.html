@@ -351,6 +351,20 @@
     .cta{padding:30px}
     .cta h2{font-size:32px}
   }
+  @media(min-width:961px){
+    .why-grid{
+      grid-template-columns:repeat(6,1fr);
+    }
+    .why-grid .feature{
+      grid-column:span 2;
+    }
+    .why-grid .feature:nth-child(4){
+      grid-column:2 / span 2;
+    }
+    .why-grid .feature:nth-child(5){
+      grid-column:4 / span 2;
+    }
+  }
 </style>
 </head>
 <body>
@@ -376,7 +390,7 @@
     <div>
       <div class="eyebrow">AI-assisted selection • compliance-aware • specialist-in-the-loop</div>
       <h1>From laboratory need to <span class="gradient">defensible decision.</span></h1>
-      <p>LabProAI helps technical buyers translate an application into technical, facility and compliance requirements, evaluate products against those requirements, surface evidence and uncertainty, involve a specialist when needed, and move the approved configuration into quoting, recurring supply planning and VMI opportunities — while preserving the decision as reusable institutional knowledge.</p>
+      <p>LabProAI helps customers and sales teams translate a laboratory application into requirements, evaluate products against those requirements, surface evidence and uncertainty, involve a specialist when needed, and move an approved configuration into quoting, supply continuity and reusable institutional knowledge.</p>
       <div class="hero-actions">
         <button class="btn btn-primary" onclick="openWizard()">Try the Guided Demo →</button>
         <button class="btn btn-outline" onclick="document.querySelector('#demo').scrollIntoView()">See Decision Workspace</button>
@@ -421,11 +435,11 @@
       <div class="feature"><div class="feature-icon">✓</div><h3>Decision logic</h3><p>Products are classified as PASS, VERIFY or FAIL against stated requirements so the user sees qualification, uncertainty and exclusion.</p></div>
       <div class="feature"><div class="feature-icon">◎</div><h3>Trust, Evidence & Compliance</h3><p>Show why a recommendation is credible — application fit, material compatibility, applicable standards and compliance requirements, supplier documentation and specialist validation — and clearly surface where evidence is incomplete, a requirement is not met, or further verification is required.</p></div>
       <div class="feature"><div class="feature-icon">↺</div><h3>Human learning loop</h3><p>When a specialist changes an AI recommendation, capture the reason and make that decision part of future institutional knowledge.</p></div>
-      <div class="feature"><div class="feature-icon">◫</div><h3>Customer memory</h3><p>Preserve each customer's approved standards, prior decisions, preferred products, application requirements and decision history so every interaction starts smarter — instead of starting over.</p></div>
+      <div class="feature"><div class="feature-icon">◫</div><h3>Customer memory</h3><p>Preserve each customer's approved standards, prior decisions, preferred products, application requirements and decision history so every interaction starts smarter — instead of starting over. Customers and sales teams do not have to restart technical discovery each time a new requirement arises.</p></div>
       <div class="feature"><div class="feature-icon">∞</div><h3>Supply Planning &amp; VMI</h3><p>Turn an approved configuration into a recurring supply plan. Estimate usage, define reorder timing, preserve qualified alternatives and identify where VMI can reduce stockouts and manual purchasing.</p></div>
       <div class="feature"><div class="feature-icon">⇄</div><h3>Supplier intelligence</h3><p>Track preferred sources, qualified alternates, documentation readiness and supply risk — giving customers greater resilience without unnecessary supplier sprawl or added procurement complexity.</p></div>
-      <div class="feature"><div class="feature-icon">◌</div><h3>24/7 Technical Front Door</h3><p>Give useful guidance before sign-in. Engage buyers while they are still uncertain, help them define what they actually need, and ask for identity only when they want to save, share, verify, request specialist help or quote.</p></div>
-      <div class="feature"><div class="feature-icon">→</div><h3>Structured specialist handoff</h3><p>Route the customer's application context, requirements, quantities, evidence gaps, unresolved uncertainty and timing as a prepared technical brief — not a cold lead.</p></div>
+      <div class="feature"><div class="feature-icon">◌</div><h3>24/7 Technical Decision Support</h3><p>Support technical qualification whether the need begins online, through a sales conversation, or within an existing account. Help define the requirement, identify uncertainty, and prepare the decision for specialist review or commercial action. Public access can still provide useful guidance before sign-in.</p></div>
+      <div class="feature"><div class="feature-icon">→</div><h3>Structured specialist handoff</h3><p>Turn a web inquiry, sales conversation or existing-account requirement into a prepared technical brief containing the application context, requirements, quantities, evidence gaps, unresolved uncertainty and timing — not a cold lead.</p></div>
     </div>
     <div class="strategy-banner"><b>Core UX principle:</b> give value first, then ask for identity. The public experience earns engagement; authentication adds organization-specific context rather than unlocking the basic intelligence.</div>
   </div>
@@ -437,6 +451,21 @@
     <h2 class="section-title">Start from the problem — not from a forced funnel.</h2>
     <p class="section-lead">A visitor may arrive with a product question, a facility plan, a compatibility concern or a supply problem. Each useful interaction creates decision context that can later become a specialist conversation, procurement action or saved project.</p>
     <div class="strategy-banner"><b>And that intelligence does not disappear when the interaction ends.</b> Requirements, comparisons, evidence gaps, specialist corrections, approved choices and supply outcomes can be captured as structured decision records. Validated learning feeds the LabProAI knowledge base, allowing institutional knowledge to compound over time. Each useful interaction can therefore improve not only the current decision, but future decisions as well. <b>That accumulating decision intelligence becomes one of LabProAI's core moats.</b></div>
+    <div class="section-kicker" style="margin-top:36px">One intelligence layer — multiple entry points</div>
+    <div class="feature-grid">
+      <div class="feature"><div class="feature-icon">↗</div><h3>New Prospect</h3><p>Discover LabProAI online → define the requirement → qualify the opportunity.</p></div>
+      <div class="feature"><div class="feature-icon">⇄</div><h3>Sales-Assisted</h3><p>Start from a customer conversation → run structured discovery → bring in decision support.</p></div>
+      <div class="feature"><div class="feature-icon">⬢</div><h3>Existing Account</h3><p>Start with another technical requirement → apply account history → select, approve and supply.</p></div>
+    </div>
+    <div class="panel" style="margin-top:20px">
+      <h3>Example: sales-assisted workflow</h3>
+      <p style="color:#66758a;font-size:13px;line-height:1.6;font-style:italic"><b>Customer says:</b> “We're starting some ESD-sensitive assembly work and need new tweezers.”</p>
+      <p style="color:#66758a;font-size:13px;line-height:1.6;margin:12px 0 0"><b>Rep + LabProAI captures:</b></p>
+      <div class="reqs" style="margin-top:8px">
+        <span class="req">ISO class?</span><span class="req">Device sensitivity?</span><span class="req">Tip geometry?</span><span class="req">Magnetic restrictions?</span>
+      </div>
+      <p style="color:#66758a;font-size:13px;line-height:1.6;margin-top:12px"><b>Result:</b> Requirements structured → products evaluated → unresolved item flagged <b>VERIFY</b> → specialist brief prepared.</p>
+    </div>
     <div class="entry-grid">
       <div class="entry-card">
         <div class="entry-label">Select</div>
@@ -470,8 +499,8 @@
 
     <div class="access-grid">
       <div class="access-card">
-        <h3>Public LabProAI</h3>
-        <p>Useful technical intelligence before an account exists.</p>
+        <h3>Open Decision Support</h3>
+        <p>Useful technical intelligence with no account required.</p>
         <div class="access-list">
           <span>Guided selectors</span><span>Capability planning</span>
           <span>Requirement flags</span><span>Product-class guidance</span>
@@ -533,7 +562,7 @@
     <p class="section-lead">The screen below illustrates the destination surface — not just recommendations, but requirements, evidence quality, exclusions, specialist learning, customer memory, supplier alternatives and supply continuity. In a production flow, this workspace is reached after the user has created the underlying decision context.</p>
 
     <div class="demo-shell">
-      <div class="demo-top"><div><b>LabProAI</b> <span>• Project: ISO 5 Semiconductor Assembly Area</span></div><span>Decision Workspace</span></div>
+      <div class="demo-top"><div><b>LabProAI</b> <span>• Account: Acme Semiconductor • Project: ISO 5 Semiconductor Assembly Area</span></div><span>Decision Workspace</span></div>
       <div class="demo-body">
         <aside class="demo-side">
           <a class="active">Project Overview</a>
@@ -577,8 +606,8 @@
               </div>
               <div class="right-card">
                 <h4>Customer Memory</h4>
-                <p><b>Prior standards:</b> ISO 5 • ESD control</p>
-                <p><b>Previous decision:</b> Lower-particle wiper preferred for critical IPA cleaning.</p>
+                <p><b>Approved requirements:</b> ISO 5 • ESD control</p>
+                <p><b>Prior specialist decision:</b> Lower-particle wiper preferred for critical IPA cleaning. <b>Approved alternate:</b> Wiper C</p>
               </div>
               <div class="right-card">
                 <h4>Supply Plan / VMI Opportunity</h4>
@@ -661,11 +690,10 @@
     <div class="section-kicker">Why this matters</div>
     <h2 class="section-title">The moat is not the chatbot. It is the structured decision intelligence underneath it.</h2>
     <p class="section-lead">The long-term asset is the relationship between application, requirement, evidence, product, supplier, specialist judgment, customer approval and actual purchase outcome. Each reviewed decision can make the next recommendation more useful, more customer-specific and more resilient.</p>
-    <div class="feature-grid">
-      <div class="feature"><div class="feature-icon">⛓</div><h3>Connected decision graph</h3><p>The underlying structure links application → environment → requirement → evidence → product → customer decision → supplier path → outcome, so technical and commercial context remain connected.</p></div>
+    <div class="feature-grid why-grid">
+      <div class="feature"><div class="feature-icon">⛓</div><h3>Connected Decision Intelligence</h3><p>Connect application requirements and technical evidence with customer approvals, specialist decisions, supplier options and purchasing outcomes. Each validated decision strengthens future application, customer and supply intelligence.</p></div>
       <div class="feature"><div class="feature-icon">◉</div><h3>Decision record</h3><p>Preserve what was considered, what was rejected, why it was approved, and who verified it.</p></div>
       <div class="feature"><div class="feature-icon">↗</div><h3>Commercial flywheel</h3><p>Selection becomes specialist conversation; approved configuration becomes quote; recurring configuration becomes supply relationship.</p></div>
-      <div class="feature"><div class="feature-icon">⇆</div><h3>What the graph compounds</h3><p>One connected decision graph compounds three domains of intelligence: application knowledge about what works and why; customer knowledge about what each organization approves and prefers; and supply knowledge about qualified sources, alternatives and outcomes. Specialist expertise validates, corrects and enriches all three.</p></div>
       <div class="feature"><div class="feature-icon">◇</div><h3>Expertise becomes an asset</h3><p>When a specialist accepts, changes or rejects a recommendation and records why, that expertise is captured as reusable institutional knowledge rather than consumed once.</p></div>
       <div class="feature"><div class="feature-icon">⛓</div><h3>Resilience without supplier sprawl</h3><p>The strategic objective is not “more vendors.” It is reliable primary partners supported by qualified alternatives — one trusted relationship with multiple qualified supply paths where needed.</p></div>
     </div>
