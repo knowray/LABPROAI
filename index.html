@@ -366,6 +366,9 @@
     }
   }
 </style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"LabProAI","url":"https://labproai.com","description":"LabProAI is an independent concept demonstration of AI-assisted technical decision support for laboratory procurement. It is not affiliated with any distributor or manufacturer referenced on the site."}
+</script>
 </head>
 <body>
 <nav class="nav">
@@ -462,7 +465,7 @@
       <p style="color:#66758a;font-size:13px;line-height:1.6;font-style:italic"><b>Customer says:</b> “We need gloves for ISO 5 work with IPA.”</p>
       <p style="color:#66758a;font-size:13px;line-height:1.6;margin:12px 0 0"><b>Rep + LabProAI captures:</b></p>
       <div class="reqs" style="margin-top:8px">
-        <span class="req">ISO class?</span><span class="req">Chemical exposure?</span><span class="req">Material restriction?</span><span class="req">Cuff length?</span>
+        <span class="req">Application?</span><span class="req">ISO class?</span><span class="req">ESD?</span><span class="req">Chemical exposure?</span>
       </div>
       <p style="color:#66758a;font-size:13px;line-height:1.6;margin-top:12px"><b>Result:</b> Requirements structured → products evaluated → unresolved item flagged <b>VERIFY</b> → specialist brief prepared.</p>
     </div>
@@ -645,32 +648,32 @@
   <div class="container">
     <div class="section-kicker">Competitive reference set</div>
     <h2 class="section-title">The market is validating the pieces. The opening is how they are combined.</h2>
-    <p class="section-lead">A few major players matter because they validate different parts of the direction. The strategic response is not to imitate their scale; it is to build a sharper interface between technical uncertainty and an actionable, defensible purchasing decision.</p>
+    <p class="section-lead">Buyer-side platforms are increasingly shaping discovery, purchasing, workflow and reordering. The opening for a specialist distributor is to own the technical decision layer, and with it the customer relationship.</p>
 
     <div class="market-grid">
       <div class="market-card">
-        <span class="market-badge">Direct scale threat</span>
+        <span class="market-badge">AI front door</span>
         <h3>VWR / Avantor</h3>
         <p><strong>Validates:</strong> broad digital commerce, workflow optimization and lab services at enterprise scale. Avantor publicly describes VWR AI primarily as conversational purchasing assistance for logged-in U.S. customers — product information, comparison, technical details, compatible accessories and purchase-history-based recommendations. Its public materials do not demonstrate the deeper application-requirement, compliance/evidence and specialist-learning decision architecture proposed for LabProAI.</p>
         <p><strong>Pressure:</strong> breadth, supplier reach and enterprise operating infrastructure. The opportunity for LabProAI is greater depth at the technical decision layer rather than competing on catalog scale.</p>
       </div>
       <div class="market-card">
-        <span class="market-badge">Direct scale threat</span>
-        <h3>Fisher Scientific / Thermo Fisher Scientific</h3>
-        <p><strong>Validates:</strong> massive product breadth, eProcurement integration, supply programs, technical support and account-level purchasing infrastructure.</p>
-        <p><strong>Pressure:</strong> scale, logistics, contracts and integrated procurement.</p>
+        <span class="market-badge">Buyer-side AI platform</span>
+        <h3>Labviva</h3>
+        <p><strong>Validates:</strong> describes itself as an AI-powered procurement platform for life sciences — AI product-content enrichment, products matched to published research, supplier demand forecasting and inventory management.</p>
+        <p><strong>Pressure:</strong> distributors, Thomas Scientific among them, sell through it. Matching products to research papers is not the same as qualifying them against engineering requirements.</p>
       </div>
       <div class="market-card">
-        <span class="market-badge">Platform benchmark</span>
+        <span class="market-badge">AI + expert review</span>
         <h3>Scientist.com</h3>
-        <p><strong>Validates:</strong> guided buying, compliance inside workflow, supplier orchestration, AI decision support and accumulated institutional data.</p>
-        <p><strong>Pressure:</strong> sophisticated procurement logic and learning from transaction history.</p>
+        <p><strong>Validates:</strong> AI orchestration across sourcing, purchasing and execution for externally sourced research, built on 10+ years of procurement data, with institutional memory and PhD-level review of AI outputs.</p>
+        <p><strong>Pressure:</strong> AI paired with expert review and accumulated transaction data — applied to research services rather than technical consumables.</p>
       </div>
       <div class="market-card">
-        <span class="market-badge">Distribution benchmark</span>
-        <h3>Thomas Scientific</h3>
-        <p><strong>Validates:</strong> full-line laboratory distribution, supply-chain solutions and continued expansion into cleanroom and controlled-environment categories.</p>
-        <p><strong>Pressure:</strong> independent distribution breadth with relevant category depth.</p>
+        <span class="market-badge">Workflow-to-purchase</span>
+        <h3>Quartzy</h3>
+        <p><strong>Validates:</strong> lab requests, approvals, inventory and finance in one workflow — and it acts as distributor of record across 20M+ products.</p>
+        <p><strong>Pressure:</strong> software that owns the lab's workflow also takes the purchase.</p>
       </div>
     </div>
 
@@ -679,9 +682,9 @@
         <h3>The wedge</h3>
         <p>Do not fight a catalog-size war. Change the interface to the decision.</p>
       </div>
-      <div class="formula">Requirement first → transparent logic → evidence → specialist validation → decision memory → resilient supply</div>
+      <div class="formula">Application requirement → technical decision → evidence → specialist judgment → decision memory → qualified supply → replenishment / potential VMI</div>
     </div>
-    <div class="market-note">Competitor names are used only as strategic market references; no affiliation or endorsement is implied. Capabilities are summarized at a high level from public company materials.</div>
+    <div class="market-note">Competitor names are used only as strategic market references; no affiliation or endorsement is implied. Capabilities are summarized at a high level from public company materials. Summarized from each company's public website, October 2026.</div>
   </div>
 </section>
 
@@ -744,7 +747,7 @@
 </section>
 
 <footer>
-  <div class="container">LabProAI demo • Competitor names used for strategic comparison only • Illustrative product, evidence, availability and supply data.</div>
+  <div class="container">LabProAI demo • Competitor names used for strategic comparison only • Illustrative product, evidence, availability and supply data.<br>LabProAI is an independent concept demonstration and is not affiliated with any distributor or manufacturer referenced on this site.</div>
 </footer>
 
 
@@ -819,12 +822,15 @@ let guidedPath = 'gloves';
 const pathConfigs = {
   gloves: {
     title: 'Cleanroom & Laboratory Glove Selection',
-    lead: 'Environment, chemical exposure, material restrictions and cuff requirements drive the ruling.',
+    lead: 'Application, cleanroom class, sterility, ESD, chemical exposure and length drive the ruling. Rules follow Lab Pro\'s published cleanroom glove guidance.',
     fields: [
-      ['environment','Environment',[['iso5','ISO 5'],['iso7','ISO 7'],['general','General lab'],['unknown','Not sure']]],
+      ['application','Application',[['semiconductor','Semiconductor / electronics'],['cleanroom','General cleanroom manufacturing'],['meddevice','Medical device'],['aseptic','Aseptic / sterile processing'],['general','General laboratory'],['unknown','Not sure']]],
+      ['environment','Environment',[['iso5','ISO 5'],['iso6','ISO 6'],['iso7','ISO 7–8'],['general','General lab'],['unknown','Not sure']]],
+      ['esd','ESD-sensitive work',[['yes','Yes'],['no','No'],['unknown','Not sure']], ()=>['semiconductor','unknown'].includes(rawVal('application'))],
+      ['sterile','Sterile gloves required',[['yes','Yes'],['no','No'],['unknown','Not sure']], ()=>rawVal('application')==='meddevice'],
       ['chemical','Chemical exposure',[['ipa','IPA'],['acetone','Acetone'],['none','None'],['unknown','Not sure']]],
       ['avoid','Material restriction',[['latex','Latex-free'],['pvc','No PVC'],['both','No latex / PVC'],['none','None specified']]],
-      ['cuff','Cuff requirement',[['12','12 inch'],['9','9 inch'],['gauntlet','Gauntlet'],['unknown','Not sure']]]
+      ['length','Glove length',[['12','12-inch'],['16','16-inch extended'],['any','No specific requirement'],['unknown','Not sure']]]
     ]
   },
   wipers: {
@@ -907,21 +913,23 @@ function prepareStep2(){
   document.getElementById('step2Lead').textContent = cfg.lead;
   document.getElementById('dynamicFields').innerHTML = cfg.fields.map(f => {
     const opts = f[2].map(o=>'<option value="'+o[0]+'">'+o[1]+'</option>').join('');
-    return '<label>'+f[1]+'<select id="gf_'+f[0]+'" onchange="updateDetectedRequirements()">'+opts+'</select></label>';
+    return '<label data-field="'+f[0]+'">'+f[1]+'<select id="gf_'+f[0]+'" onchange="updateDetectedRequirements()">'+opts+'</select></label>';
   }).join('');
   updateDetectedRequirements();
   nextStep(2);
 }
 function val(id){
   const el = document.getElementById('gf_'+id);
-  return el ? el.value : '';
+  if(!el || fieldHidden(id)) return '';
+  return el.value;
 }
 function detectedRequirements(){
   let r = [];
   const env = val('environment');
   const chem = val('chemical');
   if(env==='iso5') r.push('ISO 5 cleanliness');
-  if(env==='iso7') r.push('ISO 7 controlled environment');
+  if(env==='iso7') r.push(guidedPath==='gloves'?'ISO 7–8 controlled environment':'ISO 7 controlled environment');
+  if(env==='iso6') r.push('ISO 6 controlled environment');
   if(val('esd')==='yes') r.push('ESD control');
   if(chem==='ipa') r.push('IPA compatibility');
   if(chem==='acetone') r.push('Acetone compatibility');
@@ -941,57 +949,122 @@ function detectedRequirements(){
   if(val('garmentpriority')==='particles') r.push('Low-particle garment system');
   if(val('garmentpriority')==='splash') r.push('Chemical-splash compatibility review');
   if(val('coverage')==='coverall') r.push('Full-body coverage');
+  if(guidedPath==='gloves'){
+    const app = val('application');
+    const appLabel = {semiconductor:'Semiconductor / electronics',cleanroom:'General cleanroom manufacturing',meddevice:'Medical device',aseptic:'Aseptic / sterile processing',general:'General laboratory'}[app];
+    if(appLabel) r.unshift(appLabel);
+    if(gloveSterileReq()==='yes') r.push(app==='aseptic'?'Sterile required (aseptic processing)':'Sterile required');
+    if(env==='iso5') r.push('Bagged, DI-washed, cleanroom-processed packaging');
+    if(env==='iso6') r.push('Bagged, cleanroom-processed packaging');
+    if(env==='iso7') r.push('Boxed only if SOP-managed');
+    if(val('length')==='12') r.push('12-inch length');
+    if(val('length')==='16') r.push('16-inch extended length');
+  }
   return r;
 }
 function updateDetectedRequirements(){
+  applyFieldVisibility();
   const r = detectedRequirements();
   document.getElementById('liveRequirements').innerHTML = r.length ? r.map(x=>'<span class="req">'+x+'</span>').join('') : '<span class="req">No hard requirement triggered yet</span>';
 }
-function row(name,item,status,why,evidence){
-  currentRulings.push({name:name,item:item,status:status,why:why,evidence:evidence||''});
+function row(name,item,status,why,evidence,ruleSource,triggered){
+  currentRulings.push({name:name,item:item,status:status,why:why,evidence:evidence||'',ruleSource:ruleSource||'',triggeredRules:(triggered||[]).map(x=>Object.freeze(Object.assign({},x)))});
   const itemHtml = item ? ' <span class="sku"><span class="sku-label">Item #</span> <span class="sku-code">'+item+'</span></span>' : '';
   return '<div class="decision-row"><b>'+name+itemHtml+'</b><span class="pill '+status.toLowerCase()+'">'+status+'</span><span>'+why+'</span></div>';
 }
+/* ===== Pass 3: field visibility + glove engine (rules follow Lab Pro's Sep 2026 cleanroom glove guidance) ===== */
+function rawVal(id){ const el = document.getElementById('gf_'+id); return el ? el.value : ''; }
+function fieldHidden(id){
+  const el = document.getElementById('gf_'+id); if(!el) return false;
+  const w = el.closest('[data-field]'); return !!(w && w.style.display==='none');
+}
+function applyFieldVisibility(){
+  const cfg = pathConfigs[guidedPath]; if(!cfg) return;
+  cfg.fields.forEach(f=>{
+    if(typeof f[3]!=='function') return;
+    const w = document.querySelector('#dynamicFields [data-field="'+f[0]+'"]');
+    if(w) w.style.display = f[3]() ? '' : 'none';
+  });
+}
+function gloveSterileReq(){
+  const app = val('application');
+  if(app==='aseptic') return 'yes';
+  if(app==='meddevice') return val('sterile') || 'unknown';
+  return 'no';
+}
+const gloveAttributionNote = 'Lab Pro Inc. is referenced solely as the source of published technical guidance and product information. LabProAI is independent and is not affiliated with, endorsed by, or operated by Lab Pro Inc.';
+const gloveRuleSource = {
+  'A-ISO':"Lab Pro cleanroom glove guidance (Sep 2026) — ISO class & packaging",
+  'A-ST':"Lab Pro cleanroom glove guidance (Sep 2026) — sterile vs non-sterile",
+  'A-SEL':"Lab Pro cleanroom glove guidance (Sep 2026) — ESD properties",
+  'A-MAT':"Lab Pro cleanroom glove guidance (Sep 2026) — glove materials",
+  'A-FAQ':"Lab Pro cleanroom glove guidance (Sep 2026) — glove length",
+  'ANS':"Ansell acetone guidance; SKU-specific permeation data required",
+  'MFR':"Manufacturer data required for this SKU",
+  'CUST':"Customer's stated requirement",
+  'INPUT':"Customer input not yet confirmed"
+};
+const gloveCandidates = [
+  {key:'C1', name:'TechniGlove ESD Nitrile Cleanroom Glove', item:'TN2000W-E series', material:'nitrile', sterile:false, cleanroom:true, pack:'bagged', length:12, esd:true,
+   evidence:'Manufacturer data — TechniGlove TN2000W-E series (Lab Pro TechniGlove range): ESD-dissipative, Class 100, 12"',
+   inPool:i=>(i.esdShown && (i.esd==='yes'||i.esd==='unknown'))},
+  {key:'C3', name:'TechniGlove Sterile Nitrile Cleanroom Glove', item:'STN2001B', material:'nitrile', sterile:true, cleanroom:true, pack:'bagged', length:12, esd:null,
+   evidence:'Manufacturer data — TechniGlove STN2001B (linked in Lab Pro\'s Sep 2026 glove guide): sterile, bulk-packed, Class 100, 12"',
+   inPool:i=>(i.sterileReq==='yes' || i.sterileShown)},
+  {key:'C2', name:'TechniGlove Nitrile Cleanroom Glove', item:'TN2000B', material:'nitrile', sterile:false, cleanroom:true, pack:'bagged', length:12, esd:null,
+   evidence:'Manufacturer data — TechniGlove TN2000B (featured in Lab Pro\'s Sep 2026 glove guide): Class 100, double-bagged, 12", 5 mil',
+   inPool:()=>true},
+  {key:'C4', name:'Cleanroom Nitrile 12" — second source', item:'NG-CR-ISO5-ALT', material:'nitrile', sterile:false, cleanroom:true, pack:'bagged', length:12, esd:null,
+   evidence:'Illustrative second source — real SKU to be confirmed', inPool:()=>true},
+  {key:'C7', name:'Chemical-Resistant Butyl Glove', item:'CRG-BUTYL-14', material:'butyl', sterile:false, cleanroom:null, pack:'unknown', length:14, esd:null,
+   evidence:'Illustrative product — real SKU to be confirmed', inPool:i=>i.chem==='acetone'},
+  {key:'C5', name:'House Nitrile — 4 mil', item:'NG-GEN-4M', material:'nitrile', sterile:false, cleanroom:false, pack:'boxed', length:9.5, esd:null, house:true,
+   evidence:'Illustrative product — real SKU to be confirmed', inPool:()=>true},
+  {key:'C6', name:'Latex Exam Glove', item:'LG-EXAM-100', material:'latex', sterile:false, cleanroom:false, pack:'boxed', length:9.5, esd:null,
+   evidence:'Illustrative product — real SKU to be confirmed', inPool:()=>true}
+];
+function gloveInputs(){
+  return {app:val('application'), env:val('environment'), esd:val('esd')||'no', esdShown:!fieldHidden('esd'),
+    sterileReq:gloveSterileReq(), sterileShown:!fieldHidden('sterile'), chem:val('chemical'), avoid:val('avoid'), len:val('length')};
+}
+function evaluateGlove(c,i){
+  const t = []; const add=(id,type,reason,src)=>t.push({id:id,type:type,reason:reason,source:src});
+  // FAIL rules
+  if(i.env==='iso5' && (c.pack==='boxed' || c.cleanroom===false)) add('F1','FAIL','Boxed or non-cleanroom-processed gloves are unsuitable for ISO 5.','A-ISO');
+  if(i.env==='iso6' && c.pack==='boxed') add('F2','FAIL','ISO 6 calls for bagged, cleanroom-processed gloves.','A-ISO');
+  if(i.sterileReq==='yes' && !c.sterile) add('F3','FAIL','Sterile gloves are required for this process.','A-ST');
+  if((i.avoid==='latex'||i.avoid==='both') && c.material==='latex') add('F4','FAIL','Contains latex — conflicts with stated restriction.','CUST');
+  if(i.len==='16' && c.length<16) add('F5','FAIL','Does not provide the stated forearm / garment-interface coverage.','A-FAQ');
+  if(i.len==='12' && c.length<12) add('F6','FAIL','Standard cuff length does not meet the stated 12-inch requirement.','CUST');
+  if(i.chem==='acetone' && c.material==='nitrile' && !c.permeationData) add('F7','FAIL','Disposable nitrile is not a reliable acetone barrier, and no SKU-specific permeation data supports this use.','ANS');
+  // VERIFY rules — chemical safety first, then unconfirmed inputs, then class/sterility/ESD/material
+  if(i.chem==='acetone' && c.material==='butyl') add('V6','VERIFY','More appropriate barrier class for acetone. SKU-specific permeation and breakthrough data required'+((i.env==='iso5'||i.env==='iso6')?', plus cleanroom suitability.':'.'),'ANS');
+  if(i.chem==='acetone' && c.material==='latex') add('V7','VERIFY','Acetone performance must be confirmed against manufacturer data.','MFR');
+  if(i.chem==='ipa' && c.house) add('V8','VERIFY','IPA breakthrough data at this gauge needs confirmation.','MFR');
+  const unk = i.env==='unknown'?'Environment':i.chem==='unknown'?'Chemical exposure':i.len==='unknown'?'Glove length':null;
+  if(unk) add('V9','VERIFY',unk+' not confirmed — verify before approval.','INPUT');
+  if(i.env==='iso7' && c.pack==='boxed') add('V1','VERIFY','Boxed gloves acceptable at ISO 7–8 only if SOP-managed.','A-ISO');
+  if(i.sterileReq==='unknown' && !c.sterile) add('V2','VERIFY','Confirm whether the process requires sterile gloves.','A-ST');
+  if(i.esd==='yes' && c.esd!==true) add('V3','VERIFY','ESD data not in the product record — confirm on the manufacturer spec sheet.','A-SEL');
+  if(i.esd==='unknown' && c.esd!==true) add('V4','VERIFY','ESD requirement not confirmed.','A-SEL');
+  if(i.avoid==='none' && c.material==='latex') add('V5','VERIFY','Latex only where allergies are formally ruled out — confirm.','A-MAT');
+  const decide = t.find(x=>x.type==='FAIL') || t.find(x=>x.type==='VERIFY');
+  if(decide) return {status:decide.type, why:decide.reason, ruleSource:gloveRuleSource[decide.source], triggered:t};
+  return {status:'PASS', why:'Meets the stated requirements.'+(c.sterile && i.sterileReq==='no'?' Sterile exceeds the stated requirement.':''),
+    ruleSource:'Checked against Lab Pro cleanroom glove guidance (Sep 2026)', triggered:t};
+}
+
 function evaluateDemo(){
   currentRulings = [];
   let html = '';
   let title = '';
   if(guidedPath==='gloves'){
     title = 'Glove qualification result';
-    const env=val('environment'), chem=val('chemical'), avoid=val('avoid'), cuff=val('cuff');
-    const extCuff = (cuff==='12'||cuff==='gauntlet');
-    const unsure = (chem==='unknown'||env==='unknown'||cuff==='unknown');
-    const crStatus = (chem==='acetone'||cuff==='gauntlet')?'FAIL':unsure?'VERIFY':'PASS';
-    const crWhy = chem==='acetone'?'Thin nitrile is not a suitable barrier for the stated acetone exposure.'
-      :cuff==='gauntlet'?'A 12-inch cuff does not provide the stated gauntlet coverage.'
-      :chem==='unknown'?'Chemical exposure not confirmed — nitrile suitability depends on it.'
-      :env==='unknown'?'Cleanroom class not confirmed — verify the ISO rating needed.'
-      :cuff==='unknown'?'Cuff requirement not confirmed — 12-inch assumed.'
-      :null;
-    html += row('Cleanroom Nitrile — 12"','NG-CR-ISO5-S',crStatus,crWhy||'Strong cleanroom candidate for the stated environment and material restrictions.','Manufacturer cleanroom and material data');
-    html += row('Cleanroom Nitrile — 12" (second source)','NG-CR-ISO5-ALT',crStatus,crWhy||'Meets the same requirements from a second manufacturer — supports supply continuity.','Second manufacturer cleanroom and material data');
-    html += row('House Nitrile — 4 mil','NG-GEN-4M',
-      (chem==='acetone'||env==='iso5'||extCuff)?'FAIL':(chem==='ipa'||env==='iso7'||unsure)?'VERIFY':'PASS',
-      chem==='acetone'?'Insufficient documented protection for stated acetone exposure.'
-      :env==='iso5'?'Not cleanroom-processed — not qualified for the stated ISO 5 environment.'
-      :extCuff?'Standard cuff length does not meet the stated cuff requirement.'
-      :chem==='ipa'?'IPA breakthrough data at this gauge needs confirmation.'
-      :env==='iso7'?'Confirm particle and packaging suitability for ISO 7.'
-      :unsure?'One or more requirements unconfirmed — verify before approval.'
-      :'Cost-optimized candidate for non-solvent general use.','General product data; controlled-environment evidence limited');
-    html += row('Latex Exam Glove','LG-EXAM-100',
-      (avoid==='latex'||avoid==='both'||env==='iso5'||extCuff)?'FAIL':(chem==='acetone'||unsure)?'VERIFY':'PASS',
-      (avoid==='latex'||avoid==='both')?'Contains latex — conflicts with stated restriction.'
-      :env==='iso5'?'Not qualified for the stated ISO 5 environment.'
-      :extCuff?'Standard cuff length does not meet the stated cuff requirement.'
-      :chem==='acetone'?'Acetone performance must be confirmed against manufacturer data.'
-      :unsure?'One or more requirements unconfirmed — verify before approval.'
-      :'General-purpose option where cleanroom/latex constraints do not apply.','General manufacturer data');
-    if(chem==='acetone'){
-      html += row('Chemical-Resistant Butyl Glove','CRG-BUTYL-14','VERIFY',
-        'More appropriate barrier class for acetone. SKU-specific permeation and breakthrough data required for the actual exposure'+((env==='iso5'||env==='iso7')?', plus cleanroom suitability.':'.'),
-        'Manufacturer permeation data required');
-    }
+    const gi = gloveInputs();
+    gloveCandidates.filter(c=>c.inPool(gi)).forEach(c=>{
+      const e = evaluateGlove(c,gi);
+      html += row(c.name,c.item,e.status,e.why,c.evidence,e.ruleSource,e.triggered);
+    });
   } else if(guidedPath==='wipers'){
     title = 'Wiper qualification result';
     const env=val('environment'), chem=val('chemical'), pri=val('priority');
@@ -1146,6 +1219,7 @@ function evaluateDemo(){
     html += categories.map(c=>row(c,'','VERIFY','Category identified — configure technical requirements before final product selection.')).join('');
   }
   document.getElementById('resultTitle').textContent = title;
+  if(guidedPath==='gloves') html += '<p style="font-size:11px;color:#68778a;line-height:1.5;margin:10px 0 0">'+gloveAttributionNote+'</p>';
   document.getElementById('guidedResults').innerHTML = html;
   decisionRecord = buildDecisionRecord();
   nextStep(3);
@@ -1160,7 +1234,7 @@ function specialistSelectedLabel(fieldId){
 }
 function specialistAnswerPairs(){
   const cfg = pathConfigs[guidedPath];
-  return cfg.fields.map(f=>({
+  return cfg.fields.filter(f=>!fieldHidden(f[0])).map(f=>({
     field:f[1],
     value:specialistSelectedLabel(f[0]) || 'Not provided',
     raw:val(f[0])
@@ -1177,6 +1251,7 @@ function specialistOpenQuestions(){
   if(val('esd')==='yes') q.push('Confirm the exact ESD qualification required for the customer process and selected SKU.');
   if(val('chemical')==='acetone') q.push('Confirm application-specific acetone compatibility / exposure data before approval.');
   if(val('magnetic')==='yes') q.push('Verify non-magnetic performance for the exact material and item selected.');
+  if(guidedPath==='gloves' && gloveSterileReq()==='yes') q.push('Confirm the sterile glove specification (sterility, packaging format) against the customer\'s validated process.');
   if(!q.length) q.push('No hard blocker identified in the guided session; confirm final SKU, quantity, timing and documentation before quote.');
   return q;
 }
@@ -1334,7 +1409,7 @@ function alternateLabel(r){
 
 function rulingRowHtml(x){
   const itemHtml = x.item ? ' <span class="sku"><span class="sku-label">Item #</span> <span class="sku-code">'+esc(x.item)+'</span></span>' : '';
-  const ev = x.evidence ? '<br><small style="color:#68778a">Evidence & source: '+esc(x.evidence)+'</small>' : '';
+  const ev = (x.evidence ? '<br><small style="color:#68778a">Product evidence: '+esc(x.evidence)+'</small>' : '') + (x.ruleSource ? '<br><small style="color:#68778a">Rule source: '+esc(x.ruleSource)+'</small>' : '');
   return '<div class="decision-row"><b>'+esc(x.name)+itemHtml+'</b><span class="pill '+x.status.toLowerCase()+'">'+x.status+'</span><span>'+esc(x.why)+ev+'</span></div>';
 }
 
@@ -1384,7 +1459,7 @@ function renderBriefStage(){
       <div class="brief-block"><h4>Application context captured</h4><div class="brief-answers">${answerHtml}</div></div>
       <div class="brief-block"><h4>Triggered requirements</h4><div class="reqs" style="margin:0">${reqHtml}</div>
         <p style="margin-top:12px"><b style="color:#2b405d">Compliance posture:</b> requirements are carried into review; missing evidence is not treated as proof of compliance.</p></div>
-      <div class="brief-block full brief-results"><h4>Candidate qualification snapshot</h4>${r.rulings.map(rulingRowHtml).join('')}</div>
+      <div class="brief-block full brief-results"><h4>Candidate qualification snapshot</h4>${r.rulings.map(rulingRowHtml).join('')}${r.workstream==='gloves'?'<p style="font-size:11px;color:#68778a;line-height:1.5;margin:10px 0 0">'+esc(gloveAttributionNote)+'</p>':''}</div>
       <div class="brief-block"><h4>Evidence & compliance review</h4><ul class="brief-list">
         <li>Carry forward PASS / VERIFY / FAIL reasoning.</li>
         <li>Confirm supplier or manufacturer evidence for applicable standards and material claims.</li>
