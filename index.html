@@ -454,15 +454,15 @@
     <div class="section-kicker" style="margin-top:36px">One intelligence layer — multiple entry points</div>
     <div class="feature-grid">
       <div class="feature"><div class="feature-icon">↗</div><h3>New Prospect</h3><p>Discover LabProAI online → define the requirement → qualify the opportunity.</p></div>
-      <div class="feature"><div class="feature-icon">⇄</div><h3>Sales-Assisted</h3><p>Start from a customer conversation → run structured discovery → bring in decision support.</p></div>
+      <div class="feature"><div class="feature-icon">⇄</div><h3>Sales-Assisted</h3><p>Start from a customer conversation → run structured discovery with the customer → leave with a decision brief instead of notes.</p></div>
       <div class="feature"><div class="feature-icon">⬢</div><h3>Existing Account</h3><p>Start with another technical requirement → apply account history → select, approve and supply.</p></div>
     </div>
     <div class="panel" style="margin-top:20px">
       <h3>Example: sales-assisted workflow</h3>
-      <p style="color:#66758a;font-size:13px;line-height:1.6;font-style:italic"><b>Customer says:</b> “We're starting some ESD-sensitive assembly work and need new tweezers.”</p>
+      <p style="color:#66758a;font-size:13px;line-height:1.6;font-style:italic"><b>Customer says:</b> “We need gloves for ISO 5 work with IPA.”</p>
       <p style="color:#66758a;font-size:13px;line-height:1.6;margin:12px 0 0"><b>Rep + LabProAI captures:</b></p>
       <div class="reqs" style="margin-top:8px">
-        <span class="req">ISO class?</span><span class="req">Device sensitivity?</span><span class="req">Tip geometry?</span><span class="req">Magnetic restrictions?</span>
+        <span class="req">ISO class?</span><span class="req">Chemical exposure?</span><span class="req">Material restriction?</span><span class="req">Cuff length?</span>
       </div>
       <p style="color:#66758a;font-size:13px;line-height:1.6;margin-top:12px"><b>Result:</b> Requirements structured → products evaluated → unresolved item flagged <b>VERIFY</b> → specialist brief prepared.</p>
     </div>
@@ -947,19 +947,51 @@ function updateDetectedRequirements(){
   const r = detectedRequirements();
   document.getElementById('liveRequirements').innerHTML = r.length ? r.map(x=>'<span class="req">'+x+'</span>').join('') : '<span class="req">No hard requirement triggered yet</span>';
 }
-function row(name,item,status,why){
+function row(name,item,status,why,evidence){
+  currentRulings.push({name:name,item:item,status:status,why:why,evidence:evidence||''});
   const itemHtml = item ? ' <span class="sku"><span class="sku-label">Item #</span> <span class="sku-code">'+item+'</span></span>' : '';
   return '<div class="decision-row"><b>'+name+itemHtml+'</b><span class="pill '+status.toLowerCase()+'">'+status+'</span><span>'+why+'</span></div>';
 }
 function evaluateDemo(){
+  currentRulings = [];
   let html = '';
   let title = '';
   if(guidedPath==='gloves'){
     title = 'Glove qualification result';
     const env=val('environment'), chem=val('chemical'), avoid=val('avoid'), cuff=val('cuff');
-    html += row('Cleanroom Nitrile — 12"','NG-CR-ISO5-S','PASS','Strong cleanroom candidate for the stated material restrictions.');
-    html += row('House Nitrile — 4 mil','NG-GEN-4M', chem==='acetone'?'FAIL':chem==='ipa'?'VERIFY':'PASS', chem==='acetone'?'Insufficient documented protection for stated acetone exposure.':chem==='ipa'?'IPA breakthrough data at this gauge needs confirmation.':'Cost-optimized candidate for non-solvent use.');
-    html += row('Latex Exam Glove','LG-EXAM-100', (avoid==='latex'||avoid==='both'||env==='iso5'||cuff==='12'||cuff==='gauntlet')?'FAIL':'PASS', (avoid==='latex'||avoid==='both')?'Contains latex — conflicts with stated restriction.':env==='iso5'?'Not qualified for the stated ISO 5 environment.':'General-purpose option where cleanroom/latex constraints do not apply.');
+    const extCuff = (cuff==='12'||cuff==='gauntlet');
+    const unsure = (chem==='unknown'||env==='unknown'||cuff==='unknown');
+    const crStatus = (chem==='acetone'||cuff==='gauntlet')?'FAIL':unsure?'VERIFY':'PASS';
+    const crWhy = chem==='acetone'?'Thin nitrile is not a suitable barrier for the stated acetone exposure.'
+      :cuff==='gauntlet'?'A 12-inch cuff does not provide the stated gauntlet coverage.'
+      :chem==='unknown'?'Chemical exposure not confirmed — nitrile suitability depends on it.'
+      :env==='unknown'?'Cleanroom class not confirmed — verify the ISO rating needed.'
+      :cuff==='unknown'?'Cuff requirement not confirmed — 12-inch assumed.'
+      :null;
+    html += row('Cleanroom Nitrile — 12"','NG-CR-ISO5-S',crStatus,crWhy||'Strong cleanroom candidate for the stated environment and material restrictions.','Manufacturer cleanroom and material data');
+    html += row('Cleanroom Nitrile — 12" (second source)','NG-CR-ISO5-ALT',crStatus,crWhy||'Meets the same requirements from a second manufacturer — supports supply continuity.','Second manufacturer cleanroom and material data');
+    html += row('House Nitrile — 4 mil','NG-GEN-4M',
+      (chem==='acetone'||env==='iso5'||extCuff)?'FAIL':(chem==='ipa'||env==='iso7'||unsure)?'VERIFY':'PASS',
+      chem==='acetone'?'Insufficient documented protection for stated acetone exposure.'
+      :env==='iso5'?'Not cleanroom-processed — not qualified for the stated ISO 5 environment.'
+      :extCuff?'Standard cuff length does not meet the stated cuff requirement.'
+      :chem==='ipa'?'IPA breakthrough data at this gauge needs confirmation.'
+      :env==='iso7'?'Confirm particle and packaging suitability for ISO 7.'
+      :unsure?'One or more requirements unconfirmed — verify before approval.'
+      :'Cost-optimized candidate for non-solvent general use.','General product data; controlled-environment evidence limited');
+    html += row('Latex Exam Glove','LG-EXAM-100',
+      (avoid==='latex'||avoid==='both'||env==='iso5'||extCuff)?'FAIL':(chem==='acetone'||unsure)?'VERIFY':'PASS',
+      (avoid==='latex'||avoid==='both')?'Contains latex — conflicts with stated restriction.'
+      :env==='iso5'?'Not qualified for the stated ISO 5 environment.'
+      :extCuff?'Standard cuff length does not meet the stated cuff requirement.'
+      :chem==='acetone'?'Acetone performance must be confirmed against manufacturer data.'
+      :unsure?'One or more requirements unconfirmed — verify before approval.'
+      :'General-purpose option where cleanroom/latex constraints do not apply.','General manufacturer data');
+    if(chem==='acetone'){
+      html += row('Chemical-Resistant Butyl Glove','CRG-BUTYL-14','VERIFY',
+        'More appropriate barrier class for acetone. SKU-specific permeation and breakthrough data required for the actual exposure'+((env==='iso5'||env==='iso7')?', plus cleanroom suitability.':'.'),
+        'Manufacturer permeation data required');
+    }
   } else if(guidedPath==='wipers'){
     title = 'Wiper qualification result';
     const env=val('environment'), chem=val('chemical'), pri=val('priority');
@@ -1115,6 +1147,7 @@ function evaluateDemo(){
   }
   document.getElementById('resultTitle').textContent = title;
   document.getElementById('guidedResults').innerHTML = html;
+  decisionRecord = buildDecisionRecord();
   nextStep(3);
 }
 
@@ -1139,8 +1172,7 @@ function specialistOpenQuestions(){
   answers.forEach(a=>{
     if(a.raw==='unknown') q.push('Clarify '+a.field.toLowerCase()+' before final recommendation.');
   });
-  const resultHtml = document.getElementById('guidedResults').innerHTML;
-  if(resultHtml.indexOf('VERIFY')>-1) q.push('Resolve VERIFY flags and confirm supporting supplier / manufacturer documentation.');
+  if(currentRulings.some(r=>r.status==='VERIFY')) q.push('Resolve VERIFY flags and confirm supporting supplier / manufacturer documentation.');
   if(val('environment')==='iso5') q.push('Confirm exact ISO 5 / cleanroom suitability documentation for the selected item and application.');
   if(val('esd')==='yes') q.push('Confirm the exact ESD qualification required for the customer process and selected SKU.');
   if(val('chemical')==='acetone') q.push('Confirm application-specific acetone compatibility / exposure data before approval.');
@@ -1149,72 +1181,7 @@ function specialistOpenQuestions(){
   return q;
 }
 function openSpecialistBrief(){
-  document.getElementById('specialistModalContext').textContent = 'LabProAI • Guided Session Handoff';
-  document.getElementById('specialistModalTitle').textContent = 'Technical Procurement Brief';
-  const cfg = pathConfigs[guidedPath];
-  const reqs = detectedRequirements();
-  const answers = specialistAnswerPairs();
-  const questions = specialistOpenQuestions();
-  const results = document.getElementById('guidedResults').innerHTML;
-
-  const answerHtml = answers.map(a=>'<div class="brief-answer"><b>'+a.field+'</b>'+a.value+'</div>').join('');
-  const reqHtml = reqs.length ? reqs.map(r=>'<span class="req">'+r+'</span>').join('') : '<span class="req">No hard requirement triggered yet</span>';
-  const qHtml = questions.map(q=>'<li>'+q+'</li>').join('');
-
-  document.getElementById('specialistBriefBody').innerHTML = `
-    <div class="brief-meta">
-      <div><b>Workstream</b>${cfg.title}</div>
-      <div><b>Customer identity</b>Not yet requested — public session</div>
-      <div><b>Quantity / timing</b>Capture at handoff</div>
-      <div><b>Handoff status</b>Context prepared</div>
-    </div>
-
-    <div class="brief-grid">
-      <div class="brief-block">
-        <h4>Application context captured</h4>
-        <div class="brief-answers">${answerHtml}</div>
-      </div>
-
-      <div class="brief-block">
-        <h4>Triggered requirements</h4>
-        <div class="reqs" style="margin:0">${reqHtml}</div>
-        <p style="margin-top:12px"><b style="color:#2b405d">Compliance posture:</b> requirements are carried into review; missing evidence is not treated as proof of compliance.</p>
-      </div>
-
-      <div class="brief-block full brief-results">
-        <h4>Candidate qualification snapshot</h4>
-        ${results}
-      </div>
-
-      <div class="brief-block">
-        <h4>Evidence & compliance review</h4>
-        <ul class="brief-list">
-          <li>Carry forward PASS / VERIFY / FAIL reasoning.</li>
-          <li>Confirm supplier or manufacturer evidence for applicable standards and material claims.</li>
-          <li>Keep unresolved evidence visible until validated.</li>
-          <li>Record specialist corrections and the reason.</li>
-        </ul>
-      </div>
-
-      <div class="brief-block">
-        <h4>Open specialist questions</h4>
-        <ul class="brief-list">${qHtml}</ul>
-      </div>
-
-      <div class="brief-block full">
-        <h4>Recommended commercial next actions</h4>
-        <div class="brief-actions">
-          <div class="brief-action"><b>1. Verify</b>Close evidence / compliance gaps.</div>
-          <div class="brief-action"><b>2. Confirm</b>Preferred item and qualified alternate.</div>
-          <div class="brief-action"><b>3. Quote</b>Capture quantity, timing and commercial terms.</div>
-          <div class="brief-action"><b>4. Supply</b>Review replenishment pattern and VMI opportunity.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="brief-note"><b>Sales value:</b> the specialist receives the customer's application, requirements, candidate products and unresolved questions already organized, allowing the conversation to begin at qualification and solution level rather than repeating basic intake.</div>`;
-
-  document.getElementById('specialistModal').classList.add('open');
+  showRecordStage('brief');
 }
 function openWorkspaceSpecialistBrief(){
   document.getElementById('specialistModalContext').textContent = 'LabProAI • Decision Workspace Review';
@@ -1313,6 +1280,217 @@ function openWorkspaceSpecialistBrief(){
       <button class="btn btn-primary" onclick="alert('Demo action: specialist review request sent with the Technical Procurement Brief.')">Send for Specialist Review</button>
     </div>`;
 
+  document.getElementById('specialistModal').classList.add('open');
+}
+
+
+/* ===== Decision record: one structured record carried from customer to specialist to supply.
+   Engine rulings are immutable; specialist judgment is stored as a separate disposition. ===== */
+let currentRulings = [];
+let decisionRecord = null;
+const recordPrefix = {gloves:'LP-GLV',wipers:'LP-WIP',tweezers:'LP-TWZ',tools:'LP-TLS',garments:'LP-GAR',capability:'LP-CAP'};
+const recordNoun = {gloves:'gloves',wipers:'wipers',tweezers:'tweezers',tools:'precision tools',garments:'cleanroom garments',capability:'help planning a new capability'};
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function buildDecisionRecord(){
+  const prev = decisionRecord;
+  const answers = specialistAnswerPairs();
+  const sig = guidedPath+'|'+answers.map(a=>a.raw).join('|');
+  const rulings = currentRulings.map(r=>Object.freeze(Object.assign({},r)));
+  const viable = rulings.filter(r=>r.item && r.status!=='FAIL');
+  const primary = viable.find(r=>r.status==='PASS') || viable[0] || null;
+  const alternate = viable.find(r=>r!==primary && r.status==='PASS') || viable.find(r=>r!==primary) || null;
+  const sameSession = prev && prev.workstream===guidedPath;
+  const changed = sameSession && prev.sig!==sig;
+  return {
+    id: recordPrefix[guidedPath]+'-001',
+    version: sameSession ? (changed ? prev.version+1 : prev.version) : 1,
+    sig: sig,
+    workstream: guidedPath,
+    title: pathConfigs[guidedPath].title,
+    answers: answers,
+    requirements: detectedRequirements(),
+    rulings: rulings,                 // engine output, never edited
+    primary: primary,
+    alternate: alternate,
+    selected: primary,                // what is carried forward; may change by specialist disposition
+    unresolvedInputs: answers.filter(a=>a.raw==='unknown').map(a=>a.field),
+    // quote-ready fields: captured after the recommendation, never before
+    quantity: sameSession ? prev.quantity : '',
+    timing: sameSession ? prev.timing : '',
+    site: sameSession ? prev.site : '',
+    // specialist disposition is cleared whenever the requirement changes
+    disposition: (sameSession && !changed) ? prev.disposition : null,
+    revisedAfterReview: !!(changed && prev.disposition)
+  };
+}
+
+function alternateLabel(r){
+  const a = r.alternate; if(!a) return 'None yet';
+  if(r.disposition && r.disposition.selectedItem===a.item) return 'Specialist-approved';
+  return a.status==='PASS' ? 'Qualified alternate' : 'Conditional alternate — verification required';
+}
+
+function rulingRowHtml(x){
+  const itemHtml = x.item ? ' <span class="sku"><span class="sku-label">Item #</span> <span class="sku-code">'+esc(x.item)+'</span></span>' : '';
+  const ev = x.evidence ? '<br><small style="color:#68778a">Evidence & source: '+esc(x.evidence)+'</small>' : '';
+  return '<div class="decision-row"><b>'+esc(x.name)+itemHtml+'</b><span class="pill '+x.status.toLowerCase()+'">'+x.status+'</span><span>'+esc(x.why)+ev+'</span></div>';
+}
+
+function rulingLine(x){ return x ? esc(x.name)+' <span class="sku"><span class="sku-label">Item #</span> <span class="sku-code">'+esc(x.item)+'</span></span> <span class="pill '+x.status.toLowerCase()+'">'+x.status+'</span>' : 'No evaluated candidate — specialist decision required'; }
+
+function recordStrip(){
+  const r = decisionRecord; if(!r) return '';
+  const keys = r.answers.filter(a=>a.raw && a.raw!=='none').map(a=>esc(a.value)).join(' • ');
+  return '<div class="brief-note" style="margin:0 0 14px"><b>Record '+r.id+' (v'+r.version+') • Public session</b> '+keys+
+    (r.revisedAfterReview?'<br><b style="color:#9a5b00">Requirements changed after specialist review — review reset.</b>':'')+'</div>';
+}
+
+function stageNav(active){
+  const s = [['brief','1. Customer brief'],['specialist','2. Specialist review'],['supply','3. Quote & supply']];
+  const locked = n => (n==='supply' && !(decisionRecord && decisionRecord.disposition));
+  return '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">'+s.map(x=>
+    '<button class="btn '+(x[0]===active?'btn-primary':'btn-soft')+'" '+(locked(x[0])?'disabled title="Available after specialist review"':'')+
+    ' onclick="showRecordStage(\''+x[0]+'\')">'+x[1]+'</button>').join('')+'</div>';
+}
+
+function setQuoteField(k,v){ if(decisionRecord) decisionRecord[k]=v; }
+function timingLabel(v){ return ({now:'Needed this week','2w':'Within 2 weeks','30d':'Within 30 days',plan:'Planning only'})[v] || 'Not provided'; }
+
+function quoteFields(){
+  const r = decisionRecord;
+  const t = [['','Select timing'],['now','Needed this week'],['2w','Within 2 weeks'],['30d','Within 30 days'],['plan','Planning only']];
+  return '<div class="form-grid">'+
+    '<label>Estimated usage (cases / month)<input type="number" min="0" id="rq_quantity" value="'+esc(r.quantity)+'" oninput="setQuoteField(\'quantity\',this.value)"></label>'+
+    '<label>Timing<select id="rq_timing" onchange="setQuoteField(\'timing\',this.value)">'+t.map(o=>'<option value="'+o[0]+'"'+(r.timing===o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select></label>'+
+    '<label>Site / ship-to<input type="text" id="rq_site" value="'+esc(r.site)+'" placeholder="Optional in a public session" oninput="setQuoteField(\'site\',this.value)"></label>'+
+  '</div>';
+}
+
+function renderBriefStage(){
+  const r = decisionRecord;
+  const answerHtml = r.answers.map(a=>'<div class="brief-answer"><b>'+esc(a.field)+'</b>'+esc(a.value)+'</div>').join('');
+  const reqHtml = r.requirements.length ? r.requirements.map(x=>'<span class="req">'+esc(x)+'</span>').join('') : '<span class="req">No hard requirement triggered yet</span>';
+  const qHtml = specialistOpenQuestions().map(q=>'<li>'+esc(q)+'</li>').join('');
+  return `
+    <div class="brief-meta">
+      <div><b>Workstream</b>${esc(r.title)}</div>
+      <div><b>Customer identity</b>Not yet requested — public session</div>
+      <div><b>Recommended</b>${r.primary?esc(r.primary.name):'Specialist decision required'}</div>
+      <div><b>Handoff status</b>Context prepared</div>
+    </div>
+    <div class="brief-grid">
+      <div class="brief-block"><h4>Application context captured</h4><div class="brief-answers">${answerHtml}</div></div>
+      <div class="brief-block"><h4>Triggered requirements</h4><div class="reqs" style="margin:0">${reqHtml}</div>
+        <p style="margin-top:12px"><b style="color:#2b405d">Compliance posture:</b> requirements are carried into review; missing evidence is not treated as proof of compliance.</p></div>
+      <div class="brief-block full brief-results"><h4>Candidate qualification snapshot</h4>${r.rulings.map(rulingRowHtml).join('')}</div>
+      <div class="brief-block"><h4>Evidence & compliance review</h4><ul class="brief-list">
+        <li>Carry forward PASS / VERIFY / FAIL reasoning.</li>
+        <li>Confirm supplier or manufacturer evidence for applicable standards and material claims.</li>
+        <li>Keep unresolved evidence visible until validated.</li>
+        <li>Record specialist corrections and the reason.</li></ul></div>
+      <div class="brief-block"><h4>Open specialist questions</h4><ul class="brief-list">${qHtml}</ul></div>
+      <div class="brief-block full"><h4>Quantity and timing</h4><p style="margin:0 0 8px">Asked only after the recommendation, so it never shapes the technical ruling.</p>${quoteFields()}</div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="showRecordStage('specialist')">Send to specialist</button>
+    </div>`;
+}
+
+function renderSpecialistStage(){
+  const r = decisionRecord;
+  const verify = r.rulings.filter(x=>x.status==='VERIFY' && (x===r.primary || x===r.alternate)).map(x=>esc(x.name)+': '+esc(x.why))
+    .concat(r.unresolvedInputs.map(f=>esc(f)+' not confirmed by customer'));
+  const vHtml = verify.length ? verify.map(x=>'<li>'+x+'</li>').join('') : '<li>No open VERIFY items on the recommended path — confirm final SKU before quote.</li>';
+  const d = r.disposition;
+  const decision = d ? '<div class="brief-block full"><h4>Specialist disposition</h4><p style="margin:0"><b>'+esc(d.label)+'</b> • Engine ruling: '+esc(d.engineRuling)+' • Disposition: APPROVED'+(d.reason?'<br>Reason / evidence: “'+esc(d.reason)+'”':'')+'</p></div>' : (r.primary ? `
+    <div class="brief-block full"><h4>Specialist decision</h4>
+      <div class="form-grid">
+        <label>Action<select id="sp_action">
+          <option value="approve">Approve recommendation</option>
+          ${r.alternate?'<option value="alternate">Switch to '+(r.alternate.status==='PASS'?'qualified':'conditional')+' alternate</option>':''}
+          <option value="quantity">Adjust quantity</option>
+        </select></label>
+        <label>New quantity (if adjusting)<input type="number" min="0" id="sp_qty"></label>
+        <label>Reason or evidence (required for changes and for approving any VERIFY)<input type="text" id="sp_reason" placeholder="e.g. manufacturer IPA data reviewed for this process"></label>
+      </div>
+      <div id="sp_error" style="color:#9a1c1c;font-size:12px;margin-top:6px"></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn btn-primary" onclick="submitSpecialistDecision()">Record decision</button></div>
+    </div>` : '<div class="brief-block full"><h4>Specialist decision</h4><p style="margin:0">No evaluated candidate passed the stated requirements. The specialist sources or proposes an option outside this guided set.</p></div>');
+  const discover = r.answers.map(a=>esc(a.field.toLowerCase())).join(', ');
+  return `
+    <div class="brief-grid">
+      <div class="brief-block"><h4>Before LabProAI</h4><p style="font-style:italic;margin:0 0 10px">“Customer wants ${esc(recordNoun[r.workstream])}. Please contact.”</p>
+        <p style="margin:0">The rep still has to discover: ${discover}, which product is actually viable, what still needs evidence, quantity and timing.</p></div>
+      <div class="brief-block"><h4>With LabProAI</h4><ul class="brief-list">
+        <li><b>Requirements:</b> ${r.requirements.map(esc).join(', ')||'None triggered'}</li>
+        <li><b>Recommended:</b> ${rulingLine(r.primary)}</li>
+        <li><b>Alternate:</b> ${r.alternate?rulingLine(r.alternate)+' <small>'+alternateLabel(r)+'</small>':'None yet'}</li>
+        <li><b>Usage / timing:</b> ${r.quantity?esc(r.quantity)+' cases / month':'Not provided'} • ${timingLabel(r.timing)}</li>
+      </ul></div>
+      <div class="brief-block full"><h4>Needs specialist judgment</h4><ul class="brief-list">${vHtml}</ul></div>
+      ${decision}
+    </div>
+    <div class="brief-note"><b>Your expertise starts at validation:</b> discovery is done. Validate, adjust if needed, quote.</div>`;
+}
+
+function submitSpecialistDecision(){
+  const r = decisionRecord;
+  const a = document.getElementById('sp_action').value;
+  const reason = document.getElementById('sp_reason').value.trim();
+  const qty = document.getElementById('sp_qty').value;
+  const target = a==='alternate' ? r.alternate : r.primary;
+  const err = m => { document.getElementById('sp_error').textContent = m; };
+  if(a==='quantity' && !qty) return err('Enter the adjusted quantity.');
+  if((a!=='approve' || target.status==='VERIFY') && !reason)
+    return err(target.status==='VERIFY' ? 'This item is VERIFY. Record the evidence or reason for approving it.' : 'Add a reason. It becomes part of the decision record.');
+  let label;
+  if(a==='approve') label = 'Approved '+target.name;
+  if(a==='alternate') label = 'Changed selection from '+r.primary.name+' to '+target.name;
+  if(a==='quantity'){ label = 'Changed quantity from '+(r.quantity||'unstated')+' to '+qty+' cases / month'; r.quantity = qty; }
+  r.selected = target;
+  // the engine ruling stays as it was; the disposition is a separate layer
+  r.disposition = {action:a, label:label, reason:reason, selectedItem:target.item, engineRuling:target.status, aiRecommended:r.primary.name};
+  showRecordStage('supply');
+}
+
+function renderSupplyStage(){
+  const r = decisionRecord, d = r.disposition, s = r.selected;
+  const other = s===r.alternate ? r.primary : r.alternate;
+  const resilience = other ? rulingLine(other)+' <small>'+(other.status==='PASS'?'Qualified alternate':'Conditional alternate — verification required')+'</small>' : 'None yet — order can proceed; second source to be qualified';
+  return `
+    <div class="brief-meta">
+      <div><b>Quote status</b>Ready for quote</div>
+      <div><b>Selected</b>${esc(s.name)}</div>
+      <div><b>Engine ruling</b>${esc(s.status)}</div>
+      <div><b>Specialist disposition</b>Approved</div>
+    </div>
+    <div class="brief-grid">
+      <div class="brief-block"><h4>Quote</h4><ul class="brief-list">
+        <li><b>Item:</b> ${rulingLine(s)}</li>
+        <li><b>Usage:</b> ${r.quantity?esc(r.quantity)+' cases / month':'To confirm with customer'}</li>
+        <li><b>Timing:</b> ${timingLabel(r.timing)}</li>
+        <li><b>Site:</b> ${r.site?esc(r.site):'To confirm at quote'}</li>
+      </ul></div>
+      <div class="brief-block"><h4>Supply resilience</h4><ul class="brief-list">
+        <li><b>Alternate:</b> ${resilience}</li>
+        <li><b>Reorder:</b> ${r.quantity?'recurring '+esc(r.quantity)+' cases / month — reorder cadence can be planned':'cadence set once usage is confirmed'}</li>
+        <li><b>VMI:</b> recurring use may make this a VMI candidate — to discuss, not assumed.</li>
+      </ul></div>
+      <div class="brief-block full"><h4>Saved to the decision record</h4>
+        <p style="margin:0">LabProAI recommended ${esc(d.aiRecommended)}. ${d.action==='approve'?'Specialist approved it':'Specialist '+esc(d.label.charAt(0).toLowerCase()+d.label.slice(1))}${d.reason?' because “'+esc(d.reason)+'”':''}. The next similar request starts from this decision.</p></div>
+    </div>`;
+}
+
+function showRecordStage(stage){
+  if(!decisionRecord) return;
+  if(stage==='supply' && !decisionRecord.disposition) stage='specialist';
+  const titles = {brief:'Technical Procurement Brief', specialist:'Specialist Review', supply:'Quote & Supply Plan'};
+  document.getElementById('specialistModalContext').textContent = 'LabProAI • Record '+decisionRecord.id;
+  document.getElementById('specialistModalTitle').textContent = titles[stage];
+  const body = stage==='brief'?renderBriefStage():stage==='specialist'?renderSpecialistStage():renderSupplyStage();
+  document.getElementById('specialistBriefBody').innerHTML = recordStrip() + stageNav(stage) + body;
   document.getElementById('specialistModal').classList.add('open');
 }
 
